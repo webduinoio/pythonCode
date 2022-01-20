@@ -175,3 +175,9 @@ class esp01():
 esp01.init()
 esp01.connect("KingKit_2.4G","webduino")
 esp01.mqtt.pub("qq123","OKOK")
+
+def test(topic,msg):
+    print(topic,msg)
+
+esp01.mqtt.sub(b'esp01/qq123',test)
+print("sub...ok")

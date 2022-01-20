@@ -146,7 +146,7 @@ class Res:
 
     def get(url,file):
         try:
-            response = get('http://webduino.tw/mpy/'+url)
+            response = get('https://marty5499.github.io/pythonCode/'+url)
             print(">>",len(response.text) )
             print("get file:",file,'size:',len(response.text),',save to:',file)
             f = open(file, 'w')
@@ -207,11 +207,22 @@ class Res:
                 pass
         os.chdir('/')
 
+
+
 print("connect...")
 do_connect()
 print("get files...")
+Res.exe('lib/webduino.py')
 Res.exe('lib/urequests.py')
+Res.exe('lib/TM1637.py')
+Res.exe('lib/mfrc522.py')
+Res.exe('lib/ssd1306.py')
+Res.exe('lib/st7789py.py')
 Res.exe('lib/umqtt/simple.py')
+Res.exe('lib/max7219.py')
+Res.exe('lib/animations.py')
+Res.exe('lib/mled.py')
+Res.exe('lib/pixelart.py')
 
 """
 Res.exe('lib/uasyncio/__init__.mpy')
