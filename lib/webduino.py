@@ -4,9 +4,14 @@ from machine import Pin, PWM, Timer, WDT
 from umqtt.simple import MQTTClient
 
 class debug:
-    def print(msg="",msg2=""):
-        print(msg,msg2)
-        pass
+    state = True
+    def on():
+        debug.state = True
+    def off():
+        debug.state = False
+    def print(msg="",msg2="",msg3=""):
+        if debug.state:
+            print(msg,msg2)
 
 class LED():
     def __init__(self,pin,pwm=True):
@@ -62,7 +67,6 @@ class LED():
             self.timer = Timer(1)
             self.timer.init(period=_p_, mode=Timer.PERIODIC, callback=self.run)
             
-
 class WiFi:
 
     def disconnect():
@@ -111,7 +115,6 @@ class WiFi:
 
     def ip():
         print(Wifi.sta.ifconfig())
-
 
 class MQTT():
     

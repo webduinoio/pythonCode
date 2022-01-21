@@ -1,6 +1,7 @@
 import os
 import usocket
 import network,time
+import network , ubinascii
 
 def do_connect():
     global connected
@@ -220,13 +221,9 @@ Res.exe('lib/ssd1306.py')
 Res.exe('lib/st7789py.py')
 Res.exe('lib/umqtt/simple.py')
 Res.exe('lib/max7219.py')
-Res.exe('lib/animations.py')
 Res.exe('lib/mled.py')
-Res.exe('lib/pixelart.py')
-
-"""
-Res.exe('lib/uasyncio/__init__.mpy')
-Res.exe('lib/uasyncio/core.mpy')
-Res.exe('lib/uasyncio/stream.mpy')
-Res.exe('lib/uasyncio/task.mpy')
-"""
+Res.exe('lib/heltec/sx127x.py')
+#Res.exe('lib/animations.py')
+#Res.exe('lib/pixelart.py')
+print("========")
+print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())

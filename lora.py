@@ -2,7 +2,12 @@ import ssd1306
 from machine import Pin, I2C
 import time
 import network
+OnboardLED = Pin(25, Pin.OUT)
 
+time.sleep(1)
+OnboardLED.value(not OnboardLED.value())
+time.sleep(1)
+OnboardLED.value(not OnboardLED.value())
 
 wlan = network.WLAN(network.STA_IF) # create station interface
 wlan.active(True)       # activate the interface

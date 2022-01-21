@@ -1,48 +1,26 @@
-import network,machine,time
-from machine import Pin,PWM
-from esp import espnow
+#import LoRaDuplexCallback
+#import LoRaPingPong
+#import LoRaSender
+import LoRaSender
+import LoRaReceiver
 
-gg=machine.Pin(12, machine.Pin.OUT) 
-bb=machine.Pin(13, machine.Pin.OUT) 
-rr=machine.Pin(15, machine.Pin.OUT) 
+from config import *
+from machine import Pin, SPI
+from sx127x import SX127x
 
-w0 = network.WLAN(network.STA_IF)
-w0.active(True)
-e = espnow.ESPNow()
-e.init()
+device_spi = SPI(baudrate=10000000,
+        polarity=0, phase=0, bits=8, firstbit=SPI.MSB,
+        sck = Pin(device_config['sck'], Pin.OUT, Pin.PULL_DOWN),
+        mosi = Pin(device_config['mosi'], Pin.OUT, Pin.PULL_UP),
+        miso = Pin(device_config['miso'], Pin.IN, Pin.PULL_UP))
 
-def off():
-    rr.off()
-    gg.off()
-    bb.off()
+lora = SX127x(device_spi, pins=device_config, parameters=lora_parameters)
 
-def green():
-    rr.off()
-    gg.on()
-    bb.off()
+example = 'sender'
+#example = 'receiver'
 
-def blue():
-    rr.off()
-    gg.off()
-    bb.on()
-
-def red():
-    rr.on()
-    gg.off()
-    bb.off()
-
-peer = b'\x5c\xcf\x7f\xd3\x91\xc4'
-e.add_peer(peer)
-
-gg.on()
-while True:
-    host, msg = e.irecv()
-    if msg:
-        if msg == b'red':
-            red()
-        if msg == b'green':
-            green()
-        if msg == b'blue':
-            blue()
-        if msg == b'end':
-            break
+if __name__ == '__main__':
+    if example == 'sender':
+        LoRaSender.send(lora)
+    if example == 'receiver':
+        LoRaReceiver.receive(lora)
