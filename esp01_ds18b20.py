@@ -116,8 +116,8 @@ class DS18B20:
     def init(name):
         DS18B20.name = str.encode(name)
         DS18B20.esp01 = ESP01
-        DS18B20.sensor = ds18x20.DS18X20(onewire.OneWire(machine.Pin(2)))
-        DS18B20.roms = ds_sensor.scan()
+        DS18B20.sensor = ds18x20.DS18X20(onewire.OneWire(machine.Pin(3)))
+        DS18B20.roms = DS18B20.sensor.scan()
         DS18B20.sensor.convert_temp()
         DS18B20.esp01.init()
         DS18B20.esp01.connect()
@@ -140,13 +140,11 @@ class DS18B20:
                     print("ok")
                 except Exception as e:
                     print("DS18B20 exception:",e)
-            # enter deepsleep 5min
-            if enableDeepSleepMode > 0:
-                print("deep sleep:",enableDeepSleepMode,'mins')
-                machine.deepsleep(enableDeepSleepMode*60*1000)
             DS18B20.esp01.mqtt.checkMsg()
             time.sleep(0.1)
             now = now + 1
 
 DS18B20.init("ds18b20")
+DS18B20.esp01.mqtt.pub((DS18B20.name+b'/state'), str.encode("Start..."))
 DS18B20.run()
+

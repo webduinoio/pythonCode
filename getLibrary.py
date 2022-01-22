@@ -222,7 +222,14 @@ Res.exe('lib/st7789py.py')
 Res.exe('lib/umqtt/simple.py')
 Res.exe('lib/max7219.py')
 Res.exe('lib/mled.py')
+Res.exe('lib/ADXL345.py')
+Res.exe('lib/hmc5883l.py') # 三軸加速
+Res.exe('lib/mlx90614.py') #額溫
+Res.exe('lib/i2c_lcd.py') #額溫
 Res.exe('lib/heltec/sx127x.py')
+Res.exe('lib/dfplayer.py') #額溫
+Res.exe('lib/scanplayer.py') #額溫
+
 #Res.exe('lib/animations.py')
 #Res.exe('lib/pixelart.py')
 print("========")
