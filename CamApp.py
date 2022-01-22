@@ -386,9 +386,9 @@ try:
 
 
 #wa001
-    if CamApp.init('wa001','KingKit_2.4G','webduino'):
-        CamApp.setUploadFolder('1oaJx5OUOK8FekcANGgr972thFjm-AFrv',sendTime=5)
-        CamApp.run(enableDeepSleepMode = 5)
+#    if CamApp.init('wa001','KingKit_2.4G','webduino'):
+#        CamApp.setUploadFolder('1oaJx5OUOK8FekcANGgr972thFjm-AFrv',sendTime=5)
+#        CamApp.run(enableDeepSleepMode = 5)
 
 
 #home01 家裡中庭
@@ -410,6 +410,12 @@ try:
 #    if CamApp.init('bug01','KingKit_2.4G','webduino'):
 #        CamApp.setUploadFolder('1X5fOnihYWiaSXPw8Cmeor55TSNV2nn0-',sendTime=5)
 #        CamApp.run(enableDeepSleepMode = 0)
+
+#wa001
+    if CamApp.init('solar','KingKit_2.4G','webduino'):
+        CamApp.setUploadFolder('1f1wlSQG8qTbD79SXVsAmpvMtM_aP_GNk',sendTime=5)
+        CamApp.run(enableDeepSleepMode = 5)
+
 
 except Exception as e:
     print("init exception:",e)
