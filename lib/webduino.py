@@ -68,7 +68,7 @@ class LED():
             self.timer.init(period=_p_, mode=Timer.PERIODIC, callback=self.run)
             
 class WiFi:
-
+    onlineCallback = None
     def disconnect():
         WiFi.sta.disconnect()
 
@@ -89,13 +89,14 @@ class WiFi:
             WiFi.connect(WiFi.ssid,WiFi.pwd)
             debug.print("!!!! online callback... !!!!")
         
-    def connect(ssid="ttt",pwd="webduino"):
+    def connect(ssid="webduino.io",pwd="webduino"):
         WiFi.ssid = ssid
         WiFi.pwd = pwd
         WiFi.sta = sta_if = network.WLAN(network.STA_IF)
         sta_if.active(True)
         debug.print('connecting to network...')
-        WiFi.onlineCallback(False)
+        if(WiFi.onlineCallback is not None):
+            WiFi.onlineCallback(False)
         if not sta_if.isconnected():
             try:
                 sta_if.connect(ssid,pwd)
@@ -109,12 +110,13 @@ class WiFi:
                 cnt = 0
                 debug.print("retry connect...")
         WiFi.ip = WiFi.sta.ifconfig()[0];
-        WiFi.onlineCallback(True)
+        if(WiFi.onlineCallback is not None):
+            WiFi.onlineCallback(True)
         WiFi.startKeepConnect()
         return True
 
     def ip():
-        print(Wifi.sta.ifconfig())
+        return WiFi.sta.ifconfig()
 
 class MQTT():
     
