@@ -1,5 +1,5 @@
 import usocket as socket
-import json
+import json, struct
 
 
 class YeeLightException(Exception):
@@ -231,6 +231,24 @@ class Bulb():
             sock.close()
 
         return recv_data
+
+    def search(timeout=2):
+        msg = "\r\n".join(["M-SEARCH * HTTP/1.1", "HOST: 239.255.255.250:1982", 'MAN: "ssdp:discover"', "ST: wifi_bulb"])
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        s.bind(('', 1982))
+        s.sendto(msg.encode(), ('239.255.255.250', 1982))
+        s.settimeout(timeout)
+        bulbs = {}
+        while True:
+            try:
+                data, addr = s.recvfrom(1024)
+                capabilities = dict([x.strip("\r").split(": ") for x in data.decode().split("\n") if ":" in x])
+                key = capabilities['Location'].split(':')[1][2:]
+                bulbs[key] = capabilities
+            except:
+                break
+        return bulbs
 
     def _handle_response(self, response):
         response = json.loads(response.decode('utf-8'))
