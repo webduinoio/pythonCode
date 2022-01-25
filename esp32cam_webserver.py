@@ -4,7 +4,7 @@ import utime
 import ntptime
 import camera
 import machine
-from webserver.webserver import webcam
+from esp32cam.webserver import webcam
 
 def do_connect():
     sta_if = network.WLAN(network.STA_IF)
