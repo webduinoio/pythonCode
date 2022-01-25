@@ -1,10 +1,7 @@
 """
-d1motor.py - driver for the D1 mini motor-shield(?)
-source: https://bitbucket.org/thesheep/micropython-d1motor/src/a6d659db76a3?at=default
-2017-1017 PePo new, not-tested yet.
 import d1motor
 from machine import I2C, Pin
-i2c = I2C(Pin(5), Pin(4), freq=10000)
+i2c = I2C(Pin(5), Pin(4), freq=100000)
 m0 = d1motor.Motor(0, i2c)
 m1 = d1motor.Motor(1, i2c)
 m0.speed(5000)
@@ -69,3 +66,4 @@ class Motor:
         self._speed = 0
         self._state = _STATE_BRAKE
         self.update()
+

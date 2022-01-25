@@ -161,8 +161,6 @@ class Board:
             debug.print("connect mqtt...")
             self.mqtt.connect()
             debug.print("mqtt OK")
-            lcd.text("MQTT connnected!",0,0)
-            lcd.show()
         else:
             debug.print("offline...")
             pass
