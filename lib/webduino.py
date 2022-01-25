@@ -148,3 +148,38 @@ class MQTT():
             MQTT.client.check_msg()
         except:
             pass
+
+class Board:
+    
+    def __init__(self):
+        self.wifi = WiFi
+        self.mqtt = MQTT
+        self.wifi.onlilne(self.online)
+        
+    def online(self,status):
+        if status:
+            debug.print("connect mqtt...")
+            self.mqtt.connect()
+            debug.print("mqtt OK")
+            lcd.text("MQTT connnected!",0,0)
+            lcd.show()
+        else:
+            debug.print("offline...")
+            pass
+
+    def connect(self,ssid='webduino.io',pwd='webduino'):
+        while True:
+            if self.wifi.connect(ssid,pwd):
+                if self.mqtt.connect('mqtt1.webduino.io','webduino','webduino'):
+                    break
+        debug.print("WiFi Ready , MQTT Ready , ready to go...")
+    
+    def loop(self):
+        debug.print("run...")
+        now = 0
+        while True:
+            now = now + 1
+            if now % 100 == 0:
+                self.mqtt.client.ping()
+            self.mqtt.checkMsg()
+            time.sleep(0.1)

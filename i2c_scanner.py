@@ -1,5 +1,6 @@
-import machine
-i2c = machine.I2C(scl=machine.Pin(4), sda=machine.Pin(5))
+from machine import I2C, Pin
+
+i2c = I2C(scl=Pin(5), sda=Pin(4), freq=100000)
 
 print('Scan i2c bus...')
 devices = i2c.scan()
