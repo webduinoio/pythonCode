@@ -232,8 +232,9 @@ Res.exe('lib/heltec/sx127x.py') #LoRa
 Res.exe('lib/dfplayer.py') #MP3
 Res.exe('lib/scanplayer.py') #MP3
 Res.exe('lib/d1motor.py') # d1motor
-Res.exe('lib/webserver/webserver.py') #LoRa
-Res.exe('lib/webserver/index.html') #LoRa
+Res.exe('lib/webserver/webserver.py') 
+Res.exe('lib/webserver/microWebSrv.py')
+Res.exe('lib/webserver/www/index.html')
 
 #Res.exe('lib/animations.py')
 #Res.exe('lib/pixelart.py')

@@ -21,7 +21,7 @@ class webcam():
         self.routeHandlers = [
             ("/", "GET", self._httpHandlerIndex),
             ("/logo.svg", "GET", self._httpLogo),
-            ("/stream/<d>", "GET", self._httpStream),
+            ("/stream/<framesize>", "GET", self._httpStream),
             ("/upy/<saturation>/<brightness>/<contrast>/<quality>/<vflip>/<hflip>/<framesize>", "GET", self._httpHandlerSetData),
             ("/upy", "GET", self._httpHandlerGetData),
             ("/memory/<query>", "GET", self._httpHandlerMemory)
@@ -31,11 +31,14 @@ class webcam():
         self.led = machine.Pin(4, machine.Pin.OUT)
         camera.init(0, format=camera.JPEG, framesize=self.framesize)      #ESP32-CAM
 
-        mws = MicroWebSrv(routeHandlers=self.routeHandlers, webPath="www/")
+        mws = MicroWebSrv(routeHandlers=self.routeHandlers, webPath="/lib/webserver/")
         mws.Start(threaded=True)
         gc.collect()
 
     def _httpStream(self, httpClient, httpResponse, routeArgs):
+        print("routeArgs:",routeArgs)
+        self.framesize = int(routeArgs['framesize'])
+        camera.framesize(self.framesize)
         image = camera.capture()
 
         headers = { 'Last-Modified' : 'Fri, 1 Jan 2018 23:42:00 GMT', \
@@ -133,4 +136,3 @@ class webcam():
                                     contentType="text/html",
                                     contentCharset="UTF-8",
                                     content=content)
-
