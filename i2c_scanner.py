@@ -1,6 +1,8 @@
 from machine import I2C, Pin
 
-i2c = I2C(scl=Pin(5), sda=Pin(4), freq=100000)
+#i2c = I2C(scl=Pin(5), sda=Pin(4), freq=100000) #wemos
+
+i2c = I2C(scl=Pin(2), sda=Pin(0), freq=100000)
 
 print('Scan i2c bus...')
 devices = i2c.scan()
