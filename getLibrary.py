@@ -231,6 +231,7 @@ Res.exe('lib/lcd_api.py') #LCD
 Res.exe('lib/heltec/sx127x.py') #LoRa
 Res.exe('lib/dfplayer.py') #MP3
 Res.exe('lib/scanplayer.py') #MP3
+Res.exe('lib/d1motor.py') # d1motor
 
 #Res.exe('lib/animations.py')
 #Res.exe('lib/pixelart.py')

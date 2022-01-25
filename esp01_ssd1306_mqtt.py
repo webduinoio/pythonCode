@@ -1,16 +1,15 @@
 from webduino import *
-from machine import Pin,SoftI2C
+from machine import Pin,I2C
 import time, ssd1306
 
-time.sleep(1)
 
 # ssd1306
-i2c = SoftI2C(scl=Pin(4), sda=Pin(5), freq=100000)  #Init i2c
+i2c = I2C(scl=Pin(0), sda=Pin(2), freq=100000)  #Init i2c
 lcd = ssd1306.SSD1306_I2C(128,64,i2c) #create LCD object,Specify col and row
 
 
 class Board:
-
+    
     def init(self):
         self.wifi = WiFi
         self.mqtt = MQTT
@@ -27,7 +26,7 @@ class Board:
             debug.print("offline...")
             pass
 
-    def connect(self,ssid='KingKit_2.4G',pwd='webduino'):
+    def connect(self,ssid='webduino.io',pwd='webduino'):
         while True:
             if self.wifi.connect(ssid,pwd):
                 if self.mqtt.connect('mqtt1.webduino.io','webduino','webduino'):
@@ -36,20 +35,15 @@ class Board:
     
     def loop(self):
         debug.print("run...")
-        now = 0
         while True:
-            now = now + 1
-            if now % 100 == 0:
-                self.mqtt.client.ping()
-            self.wifi.checkConnection(0)
             self.mqtt.checkMsg()
             time.sleep(0.1)
 
 
-# wemos
-wemos = Board()
-wemos.init()
-wemos.connect("KingKit_2.4G","webduino")
+# esp01
+esp01 = Board()
+esp01.init()
+esp01.connect("KingKit_2.4G","webduino")
 
 def execEval(topic,msg):
     topic = topic.decode("utf-8")
@@ -62,5 +56,5 @@ def execEval(topic,msg):
         except:
             pass
 
-wemos.mqtt.sub('debug/display',execEval)
-wemos.loop() # mqtt ping & check wifi & check mqtt Msg
+esp01.mqtt.sub('debug/display',execEval)
+esp01.loop()
