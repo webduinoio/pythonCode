@@ -1,7 +1,8 @@
 from webduino import *
 from machine import Pin,I2C
-import time
-import webrepl
+import time, webrepl, dht, machine, _thread
+
+
 
 class Board:
     
@@ -41,6 +42,14 @@ class Board:
 esp01 = Board()
 esp01.init()
 esp01.connect("KingKit_2.4G","webduino")
+d = dht.DHT22(machine.Pin(2))
+
+def read():
+    print('d.measure():',d.measure())
+    print('d.temperature():',d.temperature())
+    print('d.humidity():',d.humidity())
+
+
 
 def runCode(topic,msg):
     topic = topic.decode("utf-8")
@@ -50,7 +59,5 @@ def runCode(topic,msg):
         eval(msg)
 
 esp01.mqtt.sub('debug/exec',runCode)
+_thread.start_new_thread(esp01.loop, ())
 webrepl.start()
-esp01.loop()
-
-

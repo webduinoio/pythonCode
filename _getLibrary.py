@@ -232,11 +232,9 @@ Res.exe('lib/heltec/sx127x.py') #LoRa
 Res.exe('lib/dfplayer.py') #MP3
 Res.exe('lib/scanplayer.py') #MP3
 Res.exe('lib/d1motor.py') # d1motor
+Res.exe('lib/rfsocket.py') # rfsocket
 Res.exe('lib/microWebSrv.py') # websever
 Res.exe('lib/esp32cam/webserver.py') 
 Res.exe('lib/esp32cam/www/index.html')
-
-#Res.exe('lib/animations.py')
-#Res.exe('lib/pixelart.py')
 print("========")
 print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
