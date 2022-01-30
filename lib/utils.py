@@ -3,12 +3,12 @@ import usocket
 import network,time
 import network , ubinascii
 
-def do_connect():
+def do_connect(ssid='webduino.io',pwd='webduino'):
     global connected
     sta_if = network.WLAN(network.STA_IF)
     sta_if.active(True)
     print('connecting to network...')
-    sta_if.connect('webduino.io', 'webduino')
+    sta_if.connect(ssid,pwd)
     cnt = 0
     while not sta_if.isconnected():
         cnt = cnt + 1
@@ -48,7 +48,6 @@ class Response:
     def json(self):
         import ujson
         return ujson.loads(self.content)
-
 
 def request(method, url, data=None, json=None, headers={}, stream=None):
     try:
@@ -123,44 +122,32 @@ def request(method, url, data=None, json=None, headers={}, stream=None):
     return resp
 
 
-def head(url, **kw):
-    return request("HEAD", url, **kw)
+class URL:
+    def head(url, **kw):
+        return request("HEAD", url, **kw)
 
-def get(url, **kw):
-    print(">>>get>>>>",url)
-    return request("GET", url, **kw)
+    def get(url, **kw):
+        print(">>>get>>>>",url)
+        return request("GET", url, **kw)
 
-def post(url, **kw):
-    return request("POST", url, **kw)
+    def post(url, **kw):
+        return request("POST", url, **kw)
 
-def put(url, **kw):
-    return request("PUT", url, **kw)
+    def put(url, **kw):
+        return request("PUT", url, **kw)
 
-def patch(url, **kw):
-    return request("PATCH", url, **kw)
+    def patch(url, **kw):
+        return request("PATCH", url, **kw)
 
-def delete(url, **kw):
-    return request("DELETE", url, **kw)
+    def delete(url, **kw):
+        return request("DELETE", url, **kw)
 
 
-class Res:
+class Utils:
 
     def save(url,file):
         try:
-            response = get(url)
-            print(">>",len(response.text) )
-            print("get file:",file,'size:',len(response.text),',save to:',file)
-            f = open(file, 'w')
-            f.write(response.text)
-            f.close()
-            print("OK.")
-        except Exception as e:
-            print("QQ:",e)
-        
-
-    def get(url,file):
-        try:
-            response = get('https://marty5499.github.io/pythonCode/'+url)
+            response = URL.get(url)
             print(">>",len(response.text) )
             print("get file:",file,'size:',len(response.text),',save to:',file)
             f = open(file, 'w')
@@ -170,8 +157,7 @@ class Res:
         except Exception as e:
             print("QQ:",e)
 
-
-    def exe(dir):
+    def mkdir(dir):
         srcDir = dir
         try:
             while True:
@@ -220,35 +206,3 @@ class Res:
             except:
                 pass
         os.chdir('/')
-
-
-
-print("connect...")
-do_connect()
-print("get files...")
-Res.exe('lib/utils.py')
-Res.exe('lib/webduino.py')
-Res.exe('lib/urequests.py')
-Res.exe('lib/TM1637.py')
-Res.exe('lib/mfrc522.py')
-Res.exe('lib/ssd1306.py')
-Res.exe('lib/st7789py.py')
-Res.exe('lib/umqtt/simple.py')
-Res.exe('lib/max7219.py')
-Res.exe('lib/mled.py')
-Res.exe('lib/ADXL345.py')
-Res.exe('lib/hmc5883l.py') # 三軸加速
-Res.exe('lib/mlx90614.py') #額溫
-Res.exe('lib/i2c_lcd.py') #LCD
-Res.exe('lib/uyeelight.py') #LCD
-Res.exe('lib/lcd_api.py') #LCD
-Res.exe('lib/heltec/sx127x.py') #LoRa
-Res.exe('lib/dfplayer.py') #MP3
-Res.exe('lib/scanplayer.py') #MP3
-Res.exe('lib/d1motor.py') # d1motor
-Res.exe('lib/rfsocket.py') # rfsocket
-Res.exe('lib/microWebSrv.py') # websever
-Res.exe('lib/esp32cam/webserver.py') 
-Res.exe('lib/esp32cam/www/index.html')
-print("========")
-print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())

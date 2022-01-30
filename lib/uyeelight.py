@@ -232,7 +232,7 @@ class Bulb():
 
         return recv_data
 
-    def search(timeout=2):
+    def search(timeout=2,debug=False):
         msg = "\r\n".join(["M-SEARCH * HTTP/1.1", "HOST: 239.255.255.250:1982", 'MAN: "ssdp:discover"', "ST: wifi_bulb"])
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -243,6 +243,8 @@ class Bulb():
         while True:
             try:
                 data, addr = s.recvfrom(1024)
+                if(debug==True):
+                    print("data:",data",addr:",addr)
                 capabilities = dict([x.strip("\r").split(": ") for x in data.decode().split("\n") if ":" in x])
                 key = capabilities['Location'].split(':')[1][2:]
                 bulbs[key] = capabilities

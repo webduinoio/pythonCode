@@ -11,8 +11,11 @@ from machine import Pin,I2C
 from utime import ticks_us, ticks_diff
 from array import array
 from RFBtn import RFBtn
-import time,os
- 
+from utils import *
+import time
+
+
+
 def beep(t=1):
     beep = Pin(12,Pin.OUT)
     for i in range(t):
@@ -87,28 +90,18 @@ class Board:
         dataArgs = data.split(' ')
         print("exceCmd:",dataArgs)
         cmd = dataArgs[0]
-        if cmd == 'reboot':
-            self.report('reboot')
-            time.sleep(1)
-            machine.reset()
-        elif cmd == 'reset':
-            os.remove('main.py')
-            self.report('reset')
-            time.sleep(1)
+        if cmd == 'reset':
             machine.reset()
         elif cmd == 'save':
-            url = dataArgs[1]
-            file = dataArgs[2]
             f = open('cmd.py','w')
             f.write('import os,machine\r\n')
             f.write('os.remove("cmd.py")\r\n')
             f.write('from utils import *\r\n')
             f.write('do_connect("webduino.io","webduino")\r\n')
-            f.write("Utils.save('"+url+"','"+file+"')\r\n")
+            f.write("Utils.save('https://share.webduino.io/storage/download/0131_001907.211_main.py','main.py')\r\n")
             f.write('machine.reset()\r\n')
             f.close()
             self.report('save')
-            time.sleep(1)
             machine.reset()
 
 # wemos
@@ -131,7 +124,6 @@ btn4 = "555aa5aa5556"
 btn315_blue   = "659aaaaa5959"
 btn315_red    = "6559a6996959"
 btn315_yellow = "556a6555a959"
-beep(5)
 
 while True:
     data = RFBtn.listener(pin5,wemos.check)
