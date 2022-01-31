@@ -149,7 +149,6 @@ class MQTT():
         except:
             pass
 
-
 class Board:
     def __init__(self,readme='Unknown...'):
         self.readme = readme
@@ -159,7 +158,6 @@ class Board:
         self.topics = {}
         self.topic_report = 'waboard/state'
         self.deviceId = self.mac().replace(':','')
-        self.deviceId = 'gogogo'
         self.topic_cmd = self.deviceId+'/cmd'
 
     def online(self,status):
@@ -190,8 +188,8 @@ class Board:
         self.topics[topic](msg)
         
     def loop(self):
-        debug.print("run...")
         now = 0
+        debug.print("run...")
         while True:
             now = now + 1
             if now % 100 == 0:

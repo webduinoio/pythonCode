@@ -25,15 +25,7 @@ def beep(t=1):
 wemos = Board('RF318Mhz')
 wemos.connect("KingKit_2.4G","webduino")
 
-def runCode(msg):
-    beep(3)
-
-publishTopic = "gateway/btn"
-print("start...",wemos.deviceId)
-
-wemos.onMsg(publishTopic,runCode)
-pin5 = Pin(5,Pin.IN)
-    
+# btn
 btn1 = "5556565a5556"
 btn2 = "5566959a5556"
 btn3 = "5559565a5556"
@@ -41,11 +33,19 @@ btn4 = "555aa5aa5556"
 btn315_blue   = "659aaaaa5959"
 btn315_red    = "6559a6996959"
 btn315_yellow = "556a6555a959"
-beep(5)
 
+def runCode(msg):
+    beep(2)
+
+publishTopic = "wa5499/btn"
+print("start...",wemos.deviceId)
+
+wemos.onMsg(publishTopic,runCode)
+pin5 = Pin(5,Pin.IN)
+    
+beep(1)
 while True:
     data = RFBtn.listener(pin5,wemos.check)
     if(len(data)==12):
         beep(1)
         wemos.mqtt.pub(publishTopic,data)
-

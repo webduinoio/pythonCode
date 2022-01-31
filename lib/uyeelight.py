@@ -24,7 +24,7 @@ class ACTION:
     LED_RECOVER_STATE = 0
     LED_STAY = 1
     LED_TURN_OFF = 2
-
+ 
 
 class SCENE_CLASS:
     COLOR = "color"
@@ -242,13 +242,15 @@ class Bulb():
         bulbs = {}
         while True:
             try:
+                print("bulb search...")
                 data, addr = s.recvfrom(1024)
                 if(debug==True):
-                    print("data:",data",addr:",addr)
+                    print("data:",data,",addr:",addr)
                 capabilities = dict([x.strip("\r").split(": ") for x in data.decode().split("\n") if ":" in x])
                 key = capabilities['Location'].split(':')[1][2:]
                 bulbs[key] = capabilities
-            except:
+            except Exception as e:
+                print("error!",e)
                 break
         return bulbs
 

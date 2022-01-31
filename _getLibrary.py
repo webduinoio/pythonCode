@@ -240,7 +240,7 @@ Res.exe('lib/ADXL345.py')
 Res.exe('lib/hmc5883l.py') # 三軸加速
 Res.exe('lib/mlx90614.py') #額溫
 Res.exe('lib/i2c_lcd.py') #LCD
-Res.exe('lib/uyeelight.py') #LCD
+Res.exe('lib/uyeelight.py') #小米燈泡
 Res.exe('lib/lcd_api.py') #LCD
 Res.exe('lib/heltec/sx127x.py') #LoRa
 Res.exe('lib/dfplayer.py') #MP3
