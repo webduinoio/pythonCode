@@ -82,19 +82,20 @@ class WiFi:
         WiFi.timer = Timer(0)
         WiFi.timer.init(period=3000, mode=Timer.PERIODIC, callback=WiFi.checkConnection)
         
-    def checkConnection():
+    def checkConnection(t):
         #print("wifi:",WiFi.sta.isconnected())
         if not WiFi.sta.isconnected():
-            debug.print("connect broke ! retry...")
             WiFi.connect(WiFi.ssid,WiFi.pwd)
             debug.print("!!!! online callback... !!!!")
-        
+        return WiFi.sta.isconnected()
+
     def connect(ssid="webduino.io",pwd="webduino"):
         WiFi.ssid = ssid
         WiFi.pwd = pwd
         WiFi.sta = sta_if = network.WLAN(network.STA_IF)
         sta_if.active(True)
-        debug.print('connecting to network...')
+        debug.print('connecting to network...',WiFi.ssid)
+        sta_if.connect(ssid,pwd)
         if(WiFi.onlineCallback is not None):
             WiFi.onlineCallback(False)
         if not sta_if.isconnected():
@@ -159,6 +160,7 @@ class Board:
         self.topic_report = 'waboard/state'
         self.deviceId = self.mac().replace(':','')
         self.topic_cmd = self.deviceId+'/cmd'
+        self.now = 0
 
     def online(self,status):
         if status:
@@ -188,17 +190,24 @@ class Board:
         self.topics[topic](msg)
         
     def loop(self):
-        now = 0
         debug.print("run...")
         while True:
-            now = now + 1
-            if now % 100 == 0:
-                self.mqtt.client.ping()
-            self.mqtt.checkMsg()
+            self.check()
             time.sleep(0.1)
 
     def check(self):
         self.mqtt.checkMsg()
+        self.now = self.now + 1
+        if self.now % 300 == 0:
+            #print("mqtt ping...")
+            try:
+                self.mqtt.client.ping()
+            except:
+                #print("mqtt broken!")
+                pass
+        if self.now % 600 == 0:
+            print("wifi check...",self.wifi.checkConnection(self.now))
+            self.now = 0        
         
     def ping(self):
         self.mqtt.client.ping()

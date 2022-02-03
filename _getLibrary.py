@@ -225,10 +225,9 @@ class Res:
 
 print("connect...")
 do_connect()
-gc.collect()
 print("get files...")
+### lib's single file max size: 8256 Bytes
 Res.exe('lib/uyeelight.py') #小米燈泡
-
 Res.exe('lib/adxl345.py')
 Res.exe('lib/utils.py')
 Res.exe('lib/webduino.py')

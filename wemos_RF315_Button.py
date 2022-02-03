@@ -33,6 +33,7 @@ class RFBtn:
         return binKey        
 
     def listener(p,cb):
+        print("start listener...")
         nedges = 100
         state = 0
         while state < 2:
@@ -74,6 +75,10 @@ class RFBtn:
 
 print("start...")
 
+
+def cb():
+    pass
+
 btn1 = "5556565a5556"
 btn2 = "5566959a5556"
 btn3 = "5559565a5556"
@@ -83,7 +88,7 @@ btn315_blue   = "659aaaaa5959"
 btn315_red    = "6559a6996959"
 btn315_yellow = "556a6555a959"
 while True:
-    data = RFBtn.listener(Pin(5,Pin.IN))
+    data = RFBtn.listener(Pin(13,Pin.IN),cb)
     print(data)
     if(len(data)==12):
         if(data==btn315_blue):
