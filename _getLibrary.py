@@ -226,6 +226,7 @@ class Res:
 print("connect...")
 do_connect()
 print("get files...")
+Res.exe('lib/adxl345.py')
 Res.exe('lib/utils.py')
 Res.exe('lib/webduino.py')
 Res.exe('lib/urequests.py')
@@ -236,6 +237,7 @@ Res.exe('lib/st7789py.py')
 Res.exe('lib/umqtt/simple.py')
 Res.exe('lib/max7219.py')
 Res.exe('lib/mled.py')
+Res.exe('lib/RFBtn.py') # RF315Mhz ,433Mhz
 Res.exe('lib/ADXL345.py')
 Res.exe('lib/hmc5883l.py') # 三軸加速
 Res.exe('lib/mlx90614.py') #額溫

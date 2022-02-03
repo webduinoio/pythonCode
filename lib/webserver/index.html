@@ -1,0 +1,396 @@
+<html>
+
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+  html,
+  body {
+    margin: 0;
+    padding: 0;
+    background: #222;
+  }
+
+  body * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 10px;
+    font-size: 16px;
+    color: #ddd;
+    text-align: center;
+    font-style: normal;
+    font-weight: normal;
+    font-family: Arial, sans-serif;
+  }
+
+  body>div {
+    margin: 20px auto;
+    width: calc(100% - 20px);
+    max-width: 400px;
+    padding: 20px 15px;
+    background: #444;
+    border-radius: 10px;
+    border: 1px solid #666;
+    border-radius: 3px;
+  }
+
+  .menu {
+    display: inline-block;
+    width: calc(33% - 4px);
+    text-align: center;
+    cursor: pointer;
+    transition: .3s;
+    border-radius: 3px;
+  }
+
+  .menu:hover {
+    background: #555;
+  }
+
+  .menu.select {
+    background: #d00;
+    color: #fff;
+  }
+
+  .main {
+    display: none;
+    border-top: 1px dashed #566;
+    border-bottom: 1px dashed #566;
+    margin: 20px auto;
+    padding: 10px 0 30px;
+  }
+
+  .main.select {
+    display: block;
+  }
+
+  i,
+  b {
+    display: block;
+  }
+
+  i {
+    margin-top: 15px;
+    color: #888;
+    font-size: 13px;
+  }
+
+  input {
+    border-radius: 0;
+    border: none;
+    outline: none;
+    width: 80%;
+    background: none;
+    color: #bbb;
+    border-bottom: 2px solid #666;
+    font-size: 18px;
+    transition: .3s;
+    padding: 0 5px 5px;
+  }
+
+  input:focus {
+    color: #fff;
+    border-bottom: 2px solid #d00;
+  }
+
+  #btnShorten {
+    display: none;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    width: auto;
+    padding: 10px 20px;
+    margin: 10px auto 0;
+    background: #069;
+    color: #fff;
+    border-radius: 3px;
+    font-size: 14px;
+  }
+
+  #btnShorten.show {
+    display: block;
+  }
+
+  #devID {
+    font-size: 28px;
+    color: #fd0;
+    padding: 0;
+  }
+
+  .checkbox {
+    text-align: center;
+    padding: 0 10px;
+  }
+
+  .checkbox em {
+    display: inline-block;
+    cursor: pointer;
+    padding: 0 20px 5px;
+    color: #888;
+    transition: .3s;
+    border-bottom: 2px solid #444;
+  }
+
+  .checkbox em:hover {
+    color: #fff;
+  }
+
+  .checkbox em.select {
+    color: #bbb;
+    border-bottom: 2px solid #bbb;
+  }
+
+  h2 {
+    font-size: 18px;
+    margin-top: 40px;
+    margin-bottom: 0;
+    padding-top: 25px;
+    border-top: 1px dashed #566;
+    font-weight: bold;
+  }
+
+  h2:first-child {
+    margin-top: 0;
+    border-top: none;
+  }
+
+  h2+i {
+    margin-top: 0;
+  }
+
+  #areaInfo b {
+    padding-top: 0;
+  }
+
+  #submit {
+    display: block;
+    margin: 10px auto 0;
+    padding: 10px;
+    color: #fff;
+    width: 100%;
+    background: #d00;
+    cursor: pointer;
+    border-radius: 3px;
+  }
+
+  h3 {
+    font-size: 13px;
+    color: #555;
+    text-align: center;
+    line-height: 0;
+    padding: 5px;
+    margin-bottom: 20px;
+  }
+  </style>
+</head>
+
+<body>
+  <div>
+    <a id="btnDevice" class="menu select">Device</a>
+    <a id="btnWifi" class="menu">Wi-Fi</a>
+    <a id="btnInfo" class="menu">Info</a>
+    <div id="areaDevice" class="main select">
+      <i>Device ID</i>
+      <b id="devID"></b>
+      <button id='btnShorten' onclick="window.location.href='/short'">Shorten the ID</button>
+      <i>Device SSID</i>
+      <input id="d">
+      <i>Device PWD</i>
+      <input id="e">
+      <i>MQTT Server</i>
+      <div id="zone" class="checkbox">
+        <em id="global" class="select">Global</em>
+        <em id="china">China</em>
+      </div>
+      <i>Enable WiFi AP</i>
+      <div id="openAp" class="checkbox">
+        <em id="Yes" class="select">Always</em>
+        <em id="No">3 minute</em>
+      </div>
+    </div>
+    <div id="areaWifi" class="main">
+      <h2>Wi-Fi No.1</h2>
+      <i>SSID</i>
+      <input id="w1Id">
+      <i>PWD</i>
+      <input id="w1Pwd">
+      <h2>Wi-Fi No.2</h2>
+      <i>SSID</i>
+      <input id="w2Id">
+      <i>PWD</i>
+      <input id="w2Pwd">
+      <h2>Wi-Fi No.3</h2>
+      <i>SSID</i>
+      <input id="w3Id">
+      <i>PWD</i>
+      <input id="w3Pwd">
+    </div>
+    <div id="areaInfo" class="main">
+      <i>AP</i>
+      <b id="showAP"></b>
+      <i>IP</i>
+      <b id="showIP"></b>
+      <i>MAC Address</i>
+      <b id="showMac"></b>
+      <i>Version</i>
+      <b id="showVer"></b>
+    </div>
+    <a id="submit">SUBMIT</a>
+  </div>
+  <h3>Powered by Webduino</h3>
+  <script src="./value.js"></script>
+  <script>
+  const menu = document.querySelectorAll('.menu');
+  const main = document.querySelectorAll('.main');
+  const zoneMenu = document.querySelectorAll('#zone em');
+  const openApMenu = document.querySelectorAll('#openAp em');
+
+  d.value = data.devSSID;
+  e.value = data.devPasswd;
+
+  w1Id.value = data.ssid1;
+  w1Pwd.value = data.passwd1;
+  w2Id.value = data.ssid2;
+  w2Pwd.value = data.passwd2;
+  w3Id.value = data.ssid3;
+  w3Pwd.value = data.passwd3;
+
+  showAP.innerHTML = data.AP;
+  showIP.innerHTML = data.IP;
+  showMac.innerHTML = data.MAC;
+  showVer.innerHTML = data.Ver;
+
+  if (typeof (data.bitId) != "undefined") {
+    devID.innerHTML = data.bitId;
+    if (data.devId == data.bitId) {
+      btnShorten.className = 'show';
+    }
+
+    btnShorten.addEventListener('click', () => {
+      devID.innerHTML = data.bitId;
+      btnShorten.className = '';
+    });
+  } else {
+    devID.innerHTML = data.devId;
+  }
+
+  let devIDValue = devID.innerHTML;
+
+  menu.forEach(e => {
+    let self = e;
+    self.addEventListener('click', () => {
+      let thisId = self.id;
+
+      menu.forEach(f => {
+        f.className = 'menu';
+      });
+      self.className = 'menu select';
+
+      main.forEach(f => {
+        f.className = 'main';
+      });
+      if (thisId.indexOf('Device') != -1) {
+        areaDevice.className = 'main select';
+      }
+      if (thisId.indexOf('Wifi') != -1) {
+        areaWifi.className = 'main select';
+      }
+      if (thisId.indexOf('Info') != -1) {
+        areaInfo.className = 'main select';
+      }
+    });
+  });
+
+  let zoneValue = data.zone;
+  // init
+  zoneMenu.forEach(e => {
+    let self = e;
+    if (self.id == zoneValue) {
+      self.className = 'select';
+    } else {
+      self.className = '';
+    }
+  });
+
+  zoneMenu.forEach(e => {
+    let self = e;
+    self.addEventListener('click', () => {
+      zoneValue = self.id;
+      zoneMenu.forEach(f => {
+        f.className = '';
+      });
+      self.className = 'select';
+    });
+  });
+
+  let openApValue = data.openAp;
+  // init
+  openApMenu.forEach(e => {
+    let self = e;
+    if (self.id == openApValue) {
+      self.className = 'select';
+    } else {
+      self.className = '';
+    }
+  });
+
+  openApMenu.forEach(e => {
+    let self = e;
+    self.addEventListener('click', () => {
+      openApValue = self.id;
+      openApMenu.forEach(f => {
+        f.className = '';
+      });
+      self.className = 'select';
+    });
+  });
+
+  submit.addEventListener('click', () => {
+    // GET
+    // window.location.href = '/ap/' + URIencoder(w1Id.value) + '/' + URIencoder(w1Pwd.value) + '/' + URIencoder(w2Id.value) + '/' + URIencoder(w2Pwd.value) + '/' + URIencoder(w3Id.value) + '/' + URIencoder(w3Pwd.value) + '/' + URIencoder(devIDValue) + '/' + URIencoder(d.value) + '/' + URIencoder(e.value) + '/' + URIencoder(zoneValue) + '/' + URIencoder(openApValue);
+
+    //POST
+    var submitData = w1Id.value + '/' + w1Pwd.value + '/' + w2Id.value + '/' + w2Pwd.value + '/' + w3Id.value + '/' + w3Pwd.value + '/' + devIDValue + '/' + d.value + '/' + e.value + '/' + zoneValue + '/' + openApValue;
+    post_to_url('/save', { 'config': submitData }); // form data will auto encode
+  });
+
+  function post_to_url(path, params) {
+    var form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.setAttribute("action", path);
+
+    for (var key in params) {
+      var hiddenField = document.createElement("input");
+      hiddenField.setAttribute("type", "hidden");
+      hiddenField.setAttribute("name", key);
+      hiddenField.setAttribute("value", params[key]);
+
+      form.appendChild(hiddenField);
+    }
+    document.body.appendChild(form);
+    form.submit();
+  }
+
+  function URIencoder(x) {
+    var code = encodeURI(x);
+    code = code.replace('/', '%2F');
+    code = code.replace('#', '%23');
+    code = code.replace('?', '%3F');
+    return code;
+  }
+
+  function checkForUpdate() {
+    if (window.applicationCache != undefined && window.applicationCache != null) {
+      window.applicationCache.addEventListener('updateready', updateApplication);
+    }
+  }
+
+  function updateApplication(event) {
+    if (window.applicationCache.status != 4) return;
+    window.applicationCache.removeEventListener('updateready', updateApplication);
+    window.applicationCache.swapCache();
+    window.location.reload();
+  }
+  </script>
+</body>
+
+</html>

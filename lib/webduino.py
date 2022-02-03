@@ -82,7 +82,7 @@ class WiFi:
         WiFi.timer = Timer(0)
         WiFi.timer.init(period=3000, mode=Timer.PERIODIC, callback=WiFi.checkConnection)
         
-    def checkConnection(t):
+    def checkConnection():
         #print("wifi:",WiFi.sta.isconnected())
         if not WiFi.sta.isconnected():
             debug.print("connect broke ! retry...")
