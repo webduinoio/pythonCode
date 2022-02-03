@@ -115,15 +115,6 @@ class Bulb():
         return self._handle_response(self._send_message("set_default"))
 
     def start_color_flow(self, count, flow_expression, action=ACTION.LED_RECOVER_STATE):
-        """
-        :param count: is the total number of visible state changing before color flow
-                         stopped. 0 means infinite loop on the state changing.
-        :param flow_expression: is the expression of the state changing series (see API docs)
-        :param action: is the action taken after the flow is stopped.
-                          0 means smart LED recover to the state before the color flow started.
-                          1 means smart LED stay at the state when the flow is stopped.
-                          2 means turn off the smart LED after the flow is stopped.
-        """
         return self._handle_response(self._send_message("start_cf",
                                                         [count, action, flow_expression]))
 
@@ -131,16 +122,6 @@ class Bulb():
         return self._handle_response(self._send_message("stop_cf"))
 
     def set_scene(self, val1, val2, val3, opt=SCENE_CLASS.COLOR):
-        """
-        :param val1: :param val2: :param val3: are class specific. (see API docs)
-        :param opt: can be "color", "hsv", "ct", "cf", "auto_delay_off".
-                      "color" means change the smart LED to specified color and brightness.
-                      "hsv" means change the smart LED to specified color and brightness.
-                      "ct" means change the smart LED to specified ct and brightness.
-                      "cf" means start a color flow in specified fashion.
-                      "auto_delay_off" means turn on the smart LED to specified
-                      brightness and start a sleep timer to turn off the light after the specified minutes.
-        """
         return self._handle_response(self._send_message("set_scene",
                                                         [opt, val1, val2, val3]))
 
@@ -157,18 +138,6 @@ class Bulb():
                                                         [type]))
 
     def set_adjust(self, action=SET_ADJUST_ACTION.INCREASE, prop=SET_ADJUST_PROP.BRIGHT):
-        """
-        :param action: the direction of the adjustment. The valid value can be:
-                         "increase": increase the specified property
-                         "decrease": decrease the specified property
-                         "circle": increase the specified property, after it reaches the max
-                         value, go back to minimum value.
-        :param prop: the property to adjust. The valid value can be:
-                        "bright": adjust brightness.
-                        "ct": adjust color temperature.
-                        "color": adjust color. (When “prop" is “color", the “action" can only
-                        be “circle", otherwise, it will be deemed as invalid request.)
-        """
         return self._handle_response(self._send_message("set_adjust",
                                                         [action, prop]))
 
