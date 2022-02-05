@@ -227,6 +227,7 @@ print("connect...")
 do_connect()
 print("get files...")
 ### lib's single file max size: 8256 Bytes
+Res.exe('lib/microWebSrv.py') # websever
 Res.exe('lib/uyeelight.py') #小米燈泡
 Res.exe('lib/adxl345.py')
 Res.exe('lib/utils.py')
@@ -250,7 +251,6 @@ Res.exe('lib/dfplayer.py') #MP3
 Res.exe('lib/scanplayer.py') #MP3
 Res.exe('lib/d1motor.py') # d1motor
 Res.exe('lib/rfsocket.py') # rfsocket
-Res.exe('lib/microWebSrv.py') # websever
 Res.exe('lib/esp32cam/webserver.py') 
 Res.exe('lib/esp32cam/www/index.html')
 print("========")

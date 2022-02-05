@@ -1,133 +1,37 @@
-from microWebSrv import MicroWebSrv
-from microWebSrv import MicroWebSrv
+import socket
+from webduino import *
 
-# ----------------------------------------------------------------------------
-
-@MicroWebSrv.route('/test')
-def _httpHandlerTestGet(httpClient, httpResponse):
-    content = \
-        """\
-	<!DOCTYPE html>
-	<html lang=en>
-        <head>
-        	<meta charset="UTF-8" />
-            <title>TEST GET</title>
-        </head>
-        <body>
-            <h1>TEST GET</h1>
-            Client IP address = %s
-            <br />
-			<form action="/test" method="post" accept-charset="ISO-8859-1">
-				First name: <input type="text" name="firstname"><br />
-				Last name: <input type="text" name="lastname"><br />
-				<input type="submit" value="Submit">
-			</form>
-        </body>
-    </html>
-	""" \
-        % httpClient.GetIPAddr()
-    httpResponse.WriteResponseOk(headers=None, contentType='text/html',
-                                 contentCharset='UTF-8',
-                                 content=content)
+def web_page(para):
+  html = """<html><head> <title>ESP Web Server</title> <meta name="viewport" content="width=device-width, initial-scale=1">
+  </head><body> <h1>ESP Web Server</h1> 
+  <p>state: <strong>""" + para + """</strong></body></html>"""
+  return html
 
 
-@MicroWebSrv.route('/test', 'POST')
-def _httpHandlerTestPost(httpClient, httpResponse):
-    formData = httpClient.ReadRequestPostedFormData()
-    firstname = formData['firstname']
-    lastname = formData['lastname']
-    content = \
-        """\
-	<!DOCTYPE html>
-	<html lang=en>
-		<head>
-			<meta charset="UTF-8" />
-            <title>TEST POST</title>
-        </head>
-        <body>
-            <h1>TEST POST</h1>
-            Firstname = %s<br />
-            Lastname = %s<br />
-        </body>
-    </html>
-	""" \
-        % (MicroWebSrv.HTMLEscape(firstname),
-           MicroWebSrv.HTMLEscape(lastname))
-    httpResponse.WriteResponseOk(headers=None, contentType='text/html',
-                                 contentCharset='UTF-8',
-                                 content=content)
 
+esp01 = Board('webServer')
+esp01.connect("KingKit_2.4G")
 
-                                                # <IP>/edit/123           ->   args['index']=123
-                                                # <IP>/edit/123/abc/bar   ->   args['index']=123  args['foo']='bar'
-                                                # <IP>/edit               ->   args={}
+s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s.bind(('', 80))
+s.listen(5)
 
-@MicroWebSrv.route('/edit/<index>')
-@MicroWebSrv.route('/edit/<index>/abc/<foo>')
-@MicroWebSrv.route('/edit')
-def _httpHandlerEditWithArgs(httpClient, httpResponse, args={}):
-    content = \
-        """\
-	<!DOCTYPE html>
-	<html lang=en>
-        <head>
-        	<meta charset="UTF-8" />
-            <title>TEST EDIT</title>
-        </head>
-        <body>
-	"""
-    content += \
-        '<h1>EDIT item with {} variable arguments</h1>'.format(len(args))
+while True:
+  conn, addr = s.accept()
+  print('Got a connection from %s' % str(addr))
+  request = conn.makefile('r',512)
 
-    if 'index' in args:
-        content += '<p>index = {}</p>'.format(args['index'])
-
-    if 'foo' in args:
-        content += '<p>foo = {}</p>'.format(args['foo'])
-
-    content += """
-        </body>
-    </html>
-	"""
-    httpResponse.WriteResponseOk(headers=None, contentType='text/html',
-                                 contentCharset='UTF-8',
-                                 content=content)
-
-
-# ----------------------------------------------------------------------------
-
-def _acceptWebSocketCallback(webSocket, httpClient):
-    print('WS ACCEPT')
-    webSocket.RecvTextCallback = _recvTextCallback
-    webSocket.RecvBinaryCallback = _recvBinaryCallback
-    webSocket.ClosedCallback = _closedCallback
-
-
-def _recvTextCallback(webSocket, msg):
-    print =('WS RECV TEXT : %s' % msg)
-    webSocket.SendText('Reply for %s' % msg)
-
-
-def _recvBinaryCallback(webSocket, data):
-    print('WS RECV DATA : %s' % data)
-
-
-def _closedCallback(webSocket):
-    print('WS CLOSED')
-
-
-# ----------------------------------------------------------------------------
-
-# routeHandlers = [
-# ....( "/test",...."GET",...._httpHandlerTestGet ),
-# ....( "/test",...."POST",...._httpHandlerTestPost )
-# ]
-
-srv = MicroWebSrv(webPath='www/')
-srv.MaxWebSocketRecvLen = 256
-srv.WebSocketThreaded = False
-srv.AcceptWebSocketCallback = _acceptWebSocketCallback
-srv.Start()
-
-# ----------------------------------------------------------------------------
-
+  print("proc...")
+  request = str(request)
+  #request = request[0:request.find('\\r\\n')]
+  print('Content = %s' % request)
+  # ?config=webduino.io/webduino/////wa5499/smart/12345678/global/No
+  config = request.find('/?config=')
+  response = web_page(str(config))
+  conn.send('HTTP/1.1 200 OK\n')
+  conn.send('Content-Type: text/html\n')
+  conn.send('Connection: close\n\n')
+  conn.sendall(response)
+  conn.send('\n\n\n\n')
+  conn.close()
+  print("-=-=-=-=-= connection close ! =-=-=-=-=-=-")

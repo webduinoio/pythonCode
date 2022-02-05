@@ -1,27 +1,42 @@
-on1 = [350, 1076, 377, 1076, 370, 1081, 374, 1081, 364, 1114, 1069, 371, 362, 1090, 1086, 372, 1101, 352, 361, 1092, 359, 1094, 359, 1118, 1063, 372, 357, 1092, 1086, 381, 1070, 387, 342, 1112, 337, 1116, 338, 1111, 344, 1106, 341, 1115, 342, 1112, 336, 1110, 1071, 385, 343, 11047]
-on2 = [340, 1106, 396, 1056, 364, 1084, 354, 1101, 354, 1099, 1082, 378, 351, 1113, 1069, 375, 1089, 376, 352, 1102, 352, 1093, 360, 1091, 1095, 368, 354, 1098, 1069, 397, 1072, 391, 339, 1108, 351, 1101, 343, 1101, 352, 1105, 343, 1111, 342, 1112, 343, 1115, 1064, 397, 330, 10883]
-on3 = [374, 1060, 379, 1073, 380, 1075, 373, 1082, 374, 1073, 1106, 356, 372, 1079, 1096, 364, 1092, 369, 362, 1083, 371, 1089, 368, 1080, 1089, 368, 369, 1086, 1081, 376, 994, 353, 406, 1000, 356, 1258, 355, 1101, 339, 1110, 347, 1105, 347, 1097, 351, 1104, 1071, 382, 344, 10904]
-on4 = [355, 1081, 365, 1066, 368, 1081, 354, 1096, 350, 1105, 330, 1102, 342, 1087, 1084, 353, 373, 1071, 380, 1065, 386, 1063, 1099, 351, 358, 1085, 347, 1099, 1068, 372, 1079, 378, 347, 1088, 362, 1076, 373, 1065, 366, 1074, 369, 1082, 360, 1092, 342, 1095, 1069, 365, 357, 10790]
-on5 = [355, 1081, 365, 1066, 368, 1081, 354, 1096, 350, 1105, 330, 1102, 342, 1087, 1084, 353, 373, 1071, 380, 1065, 386, 1063, 1099, 351, 358, 1085, 347, 1099, 1068, 372, 1079, 378, 347, 1088, 362, 1076, 373, 1065, 366, 1074, 369, 1082, 360, 1092, 342, 1095, 1069, 365, 357, 10790]
+import machine
+import socket
+from webduino import *
 
 
-def parseData(data):
-    key = ''
-    charKey = ''
-    for i in data:
-        if i > 10000:
+pins = [machine.Pin(i, machine.Pin.IN) for i in (0, 2, 4, 5, 12, 13, 14, 15)]
+
+html = """<!DOCTYPE html>
+<html>
+    <head> <title>ESP8266 Pins</title> </head>
+    <body> <h1>ESP8266 Pins</h1>
+        <table border="1"> <tr><th>Pin</th><th>Value</th></tr> %s </table>
+    </body>
+</html>
+"""
+
+esp01 = Board('webServer')
+esp01.connect("KingKit_2.4G")
+addr = socket.getaddrinfo('0.0.0.0', 80)[0][-1]
+
+s = socket.socket()
+s.bind(addr)
+s.listen(1)
+
+print('listening on', addr)
+
+while True:
+    cl, addr = s.accept()
+    print('client connected from', addr)
+    cl_file = cl.makefile('rwb', 0)
+    while True:
+        line =  cl_file.readline()
+        print("line:",line)
+        if line == b'GET /favicon.ico HTTP/1.1\r\n':
             break
-        elif i > 900:
-            key = key + "1"
-        else:
-            key = key + "0"
-        if(len(key)%8==0):
-            c = chr(int(key, 2))
-            charKey = charKey + c
-            key = ' '
-    return charKey
-
-
-print(parseData(on1))
-print(parseData(on2))
-print(parseData(on3))
+        if not line or line == b'\r\n':
+            break
+    rows = ['<tr><td>%s</td><td>%d</td></tr>' % (str(p), p.value()) for p in pins]
+    response = html % '\n'.join(rows)
+    cl.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')
+    cl.send(response)
+    cl.close()

@@ -1,7 +1,7 @@
 import network, time, machine, ubinascii, os
-import usocket
 from machine import Pin, PWM, Timer, WDT
 from umqtt.simple import MQTTClient
+from WebServer import WebServer
 
 class debug:
     state = True
@@ -11,64 +11,13 @@ class debug:
         debug.state = False
     def print(msg="",msg2="",msg3=""):
         if debug.state:
-            print(msg,msg2)
+            print(msg,msg2)            
 
-class LED():
-    def __init__(self,pin,pwm=True):
-        self.pin = pin
-        self.strong=2
-        self.state = False
-        self.timer = None
-        self.isBlink = False
-        if pwm:
-            self.pwm = PWM(Pin(pin))
-            self.pwm.freq(1024)
-            self.pwm.duty(0)
-        self.off()
-        time.sleep(0.01)
-        self.off()
-        time.sleep(0.01)
-        self.off()
-        time.sleep(0.01)
-            
-    def on(self,strong=-1):
-        self.state = True
-        if not strong == -1:
-            self.strong= strong
-        self.pwm.duty(self.strong)
-        
-    def off(self):
-        self.state = False
-        self.pwm.duty(0)
-    
-    def run(self,n):
-        if self.isBlink:
-            if self.state:
-                self.off()
-            else:
-                self.on()
-    
-    def blink(self,peroid):
-        _p_ = int(peroid*1000)
-        if _p_ == 0:
-            self.isBlink = False
-            self.off()
-            return
-        else:
-            self.isBlink = True
-            self.on()
-        
-        if self.timer == None:
-            self.timer = Timer(1)
-            self.timer.init(period=_p_, mode=Timer.PERIODIC, callback=self.run)
-            debug.print("LED:default use Timer(0)",self.timer)
-        else:
-            self.timer.deinit()
-            self.timer = Timer(1)
-            self.timer.init(period=_p_, mode=Timer.PERIODIC, callback=self.run)
-            
 class WiFi:
     onlineCallback = None
+    ssid="webduino.io"
+    pwd="webduino"
+    ip="unknown"
     def disconnect():
         WiFi.sta.disconnect()
 
@@ -83,11 +32,15 @@ class WiFi:
         WiFi.timer.init(period=3000, mode=Timer.PERIODIC, callback=WiFi.checkConnection)
         
     def checkConnection(t):
-        #print("wifi:",WiFi.sta.isconnected())
         if not WiFi.sta.isconnected():
             WiFi.connect(WiFi.ssid,WiFi.pwd)
             debug.print("!!!! online callback... !!!!")
         return WiFi.sta.isconnected()
+
+    def enableAP(ssid="esp01",pwd="12345678"):
+        WiFi.ap = network.WLAN(network.AP_IF)
+        WiFi.ap.config(essid=ssid,password=pwd)
+        WiFi.ap.active()
 
     def connect(ssid="webduino.io",pwd="webduino"):
         WiFi.ssid = ssid
@@ -116,10 +69,8 @@ class WiFi:
         WiFi.startKeepConnect()
         return True
 
-    def ip():
-        return WiFi.sta.ifconfig()
 
-class MQTT():
+class MQTT:
     
     def connect(server = 'mqtt1.webduino.io',user ='webduino' ,pwd='webduino'):
         MQTT.server = server
@@ -151,22 +102,46 @@ class MQTT():
             pass
 
 class Board:
-    def __init__(self,readme='Unknown...'):
-        self.readme = readme
+    
+    Ver = '0.99b'
+    def __init__(self,devId=''):
+        self.devSSID = ''
+        self.devPasswd = ''
         self.wifi = WiFi
         self.mqtt = MQTT
         self.wifi.onlilne(self.online)
         self.topics = {}
         self.topic_report = 'waboard/state'
-        self.deviceId = self.mac().replace(':','')
-        self.topic_cmd = self.deviceId+'/cmd'
+        self.config = Config
         self.now = 0
+        if(devId == ''):
+            devId = self.mac().replace(':','')
+        self.devId = devId
+        self.topic_cmd = self.devId+'/cmd'
+        self.config.update(self)
+    
+    def ap(self):
+        return self.wifi.ssid
 
+    def ip(self):
+        return self.wifi.ip
+
+    def mac(self):
+        return ubinascii.hexlify(network.WLAN().config('mac'),':').decode()
+
+    def enableAP(self,ssid='esp8266',pwd='12345678'):
+        self.devSSID = ssid
+        self.devPasswd = pwd
+        self.config.update(self)
+        self.wifi.enableAP(ssid,pwd)
+        self.wifi.web = WebServer(self,80)
+        self.wifi.web.listener()
+        print("webServer start...")
+        
     def online(self,status):
         if status:
-            debug.print("connect mqtt...")
             self.mqtt.connect()
-            debug.print("mqtt OK")
+            debug.print("connect mqtt...OK")
         else:
             debug.print("offline...")
             pass
@@ -177,8 +152,10 @@ class Board:
                 if self.mqtt.connect('mqtt1.webduino.io','webduino','webduino'):
                     break
         debug.print("WiFi Ready , MQTT Ready , ready to go...")
+        self.config.update(self)
         self.onMsg(self.topic_cmd,self.execCmd)
         self.report('boot')
+        return self
         
     def onMsg(self,topic,cbFunc):
         self.topics[topic] = cbFunc
@@ -212,11 +189,8 @@ class Board:
     def ping(self):
         self.mqtt.client.ping()
 
-    def mac(self):
-        return ubinascii.hexlify(network.WLAN().config('mac'),':').decode()
-    
     def report(self,cmd):
-        report = cmd + ' '+self.deviceId+' '+self.readme
+        report = cmd + ' '+self.devId
         self.mqtt.pub(self.topic_report,report)
     
     def execCmd(self,data):
@@ -246,3 +220,65 @@ class Board:
             self.report('save')
             time.sleep(1)
             machine.reset()
+
+class Config:
+ 
+    def update(board):
+        config = Config.loadJSON()
+        config['devId'] = board.devId
+        config['devSSID'] = board.devSSID
+        config['devPasswd'] = board.devPasswd
+        config['AP'] = board.ap()
+        config['Ver'] = board.Ver
+        try:
+            config['IP'] = board.ip()
+        except:
+            config['IP'] = 'unknown'
+        config['MAC'] = board.mac()
+        Config.saveJSON(config)
+
+    def toJSON(data): 
+        data = data.split('/')
+        config = {
+            'ssid1': data[0],
+            'passwd1': data[1],
+            'ssid2': data[2],
+            'passwd2': data[3],
+            'ssid3': data[4],
+            'passwd3': data[5],
+            'devId' : data[6],
+            'devSSID': data[7],
+            'devPasswd': data[8],
+            'zone': data[9],
+            'openAp': data[10],
+            'MAC': '??:??:??:??:??:??', 
+            'devId': '?', 
+            'devSSID': '?', 
+            'devPasswd': '?',
+            'IP':'?',
+            'AP':'?'
+        }
+        return config
+    
+    def show():
+        return Config.loadJSON()
+    
+    def loadJSON():
+        data = None
+        try:
+            file = open('value.js','r')
+            data = file.readline()
+            file.close()
+        except:
+            json = Config.toJSON("webduino.io/webduino/////a12345/wa5499/12345678/global/No")
+            data = Config.saveJSON(json)
+        print("data:",data)
+        return eval(data[9:])
+        
+    def saveJSON(json):
+        file = open('value.js','w')
+        data = "var data="+str(json)
+        file.write(data)
+        file.close()
+        return data
+
