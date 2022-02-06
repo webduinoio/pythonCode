@@ -43,9 +43,8 @@ class WebServer:
         formData = cl_file.read(contentLen)
         if(urlPage == '/save'):
             config = self.unquote(formData).decode("utf-8")[7:]
-            config = self.board.config.toJSON(config)
-            self.board.config.saveJSON(config)
-            self.board.config.update(self.board)
+            self.board.config.updateFromString(config)
+            self.board.config.save()
             cs.send("Save OK") 
         cs.close() 
 
@@ -57,14 +56,23 @@ class WebServer:
                 raise Exception("no process",filename)
             if filename == '':
                 filename = 'index.html'
-            file = open(filename, "r")
-            while True:
-                line = file.readline()
-                time.sleep(0.02)
-                if(line==""):
-                    break
-                cs.send(line)
-            file.close()         
+            if filename == 'value.js':
+                config = self.board.config.data
+                config['AP'] = self.board.ap()
+                config['IP'] = self.board.ip()
+                config['MAC'] = self.board.mac()
+                config['Ver'] = self.board.Ver
+                print("resp:",str(config))
+                cs.send("var data="+str(config))
+            else:    
+                file = open(filename, "r")
+                while True:
+                    line = file.readline()
+                    time.sleep(0.02)
+                    if(line==""):
+                        break
+                    cs.send(line)
+                file.close()         
         except Exception as e:
             print("Error:",e)
             pass
@@ -78,19 +86,24 @@ class WebServer:
         #print('client connected from', addr)
         cl_file = cs.makefile('rwb', 0)
         req['stream'] = cl_file
-        while True:
-            line = cl_file.readline()
+        test = ''
+        while True: 
+            line = cl_file.readline().decode("utf-8")
             #print("line:",line)
-            if not line or line == b'\r\n':
-                break
+            if not line or line == '\r\n':
+                break 
             if len(line)>18 and str(line).find('Content-Length:')>=0:
-                req['Content-Length'] = int(str(line)[18:-5])
-            if len(line)>4 and (line[0:5]==b'GET /' or line[0:6]==b'POST /'):
-                req['url'] = str(line).split(' ')
-        print("request:",req['url'])
-        if(req['url'][1] is '/save'):
+                print("contentLen:",line)
+                req['Content-Length'] = int(line[16:])
+            if len(line)>4 and (line[0:5]=='GET /' or line[0:6]=='POST /'):
+                req['url'] = line.split(' ')
+
+        print("request:",req)
+
+        if(req['url'][0] == "POST"):
             self.processPost(cs,req)
-        else:
+            
+        elif(req['url'][0] == "GET"):
             self.processGet(cs,req)        
 
     def listener(self):

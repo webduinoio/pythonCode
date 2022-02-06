@@ -103,10 +103,8 @@ class MQTT:
 
 class Board:
     
-    Ver = '0.99b'
-    def __init__(self,devId=''):
-        self.devSSID = ''
-        self.devPasswd = ''
+    Ver = '0.1.9b'
+    def __init__(self,devId='',enableAP=False):
         self.wifi = WiFi
         self.mqtt = MQTT
         self.wifi.onlilne(self.online)
@@ -114,12 +112,21 @@ class Board:
         self.topic_report = 'waboard/state'
         self.config = Config
         self.now = 0
+        json = self.config.load()
+        print("json:",json)
         if(devId == ''):
-            devId = self.mac().replace(':','')
+            if json['devId']=='unknown':
+                json['devId'] = self.mac().replace(':','')
+                print('save devId:',json['devId'])
+            devId = json['devId']
+        else:
+            json['devId'] = devId
+        self.config.save()
         self.devId = devId
         self.topic_cmd = self.devId+'/cmd'
-        self.config.update(self)
-    
+        if enableAP == True:
+            self.enableAP()
+
     def ap(self):
         return self.wifi.ssid
 
@@ -129,10 +136,9 @@ class Board:
     def mac(self):
         return ubinascii.hexlify(network.WLAN().config('mac'),':').decode()
 
-    def enableAP(self,ssid='esp8266',pwd='12345678'):
-        self.devSSID = ssid
-        self.devPasswd = pwd
-        self.config.update(self)
+    def enableAP(self):
+        ssid = self.config.data['devSSID']
+        pwd = self.config.data['devPasswd']
         self.wifi.enableAP(ssid,pwd)
         self.wifi.web = WebServer(self,80)
         self.wifi.web.listener()
@@ -152,7 +158,6 @@ class Board:
                 if self.mqtt.connect('mqtt1.webduino.io','webduino','webduino'):
                     break
         debug.print("WiFi Ready , MQTT Ready , ready to go...")
-        self.config.update(self)
         self.onMsg(self.topic_cmd,self.execCmd)
         self.report('boot')
         return self
@@ -223,62 +228,49 @@ class Board:
 
 class Config:
  
-    def update(board):
-        config = Config.loadJSON()
-        config['devId'] = board.devId
-        config['devSSID'] = board.devSSID
-        config['devPasswd'] = board.devPasswd
-        config['AP'] = board.ap()
-        config['Ver'] = board.Ver
-        try:
-            config['IP'] = board.ip()
-        except:
-            config['IP'] = 'unknown'
-        config['MAC'] = board.mac()
-        Config.saveJSON(config)
-
-    def toJSON(data): 
-        data = data.split('/')
-        config = {
-            'ssid1': data[0],
-            'passwd1': data[1],
-            'ssid2': data[2],
-            'passwd2': data[3],
-            'ssid3': data[4],
-            'passwd3': data[5],
-            'devId' : data[6],
-            'devSSID': data[7],
-            'devPasswd': data[8],
-            'zone': data[9],
-            'openAp': data[10],
-            'MAC': '??:??:??:??:??:??', 
-            'devId': '?', 
-            'devSSID': '?', 
-            'devPasswd': '?',
-            'IP':'?',
-            'AP':'?'
-        }
-        return config
+    data = {}
     
     def show():
-        return Config.loadJSON()
+        print(Config.data)
     
-    def loadJSON():
+    def updateFromString(data): 
+        data = data.split('/')
+        Config.data['ssid1'] = data[0]
+        Config.data['passwd1'] = data[1]
+        Config.data['ssid2'] = data[2]
+        Config.data['passwd2'] = data[3]
+        Config.data['ssid3'] = data[4]
+        Config.data['passwd3'] = data[5]
+        Config.data['devId'] = data[6]
+        Config.data['devSSID'] = data[7]
+        Config.data['devPasswd'] = data[8]
+        Config.data['zone'] = data[9]
+        Config.data['openAp'] = data[10]
+        return Config.data
+    
+    def load(): 
+        defaultData = "webduino.io/webduino/////unknown/wa/12345678/global/No"
         data = None
         try:
             file = open('value.js','r')
             data = file.readline()
+            Config.data = eval(data[9:])
             file.close()
         except:
-            json = Config.toJSON("webduino.io/webduino/////a12345/wa5499/12345678/global/No")
-            data = Config.saveJSON(json)
-        print("data:",data)
-        return eval(data[9:])
+            Config.updateFromString(defaultData)
+            Config.save()
+        print(" -=-=- ")
+        print("load:",Config.data)
+        print(" -=-=- ")
+        return Config.data
         
-    def saveJSON(json):
+    def save():
         file = open('value.js','w')
-        data = "var data="+str(json)
+        data = "var data="+str(Config.data)
         file.write(data)
+        print(" -=-=- ")
+        print("save:",Config.data)
+        print(" -=-=- ")
         file.close()
         return data
 
