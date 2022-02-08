@@ -241,6 +241,7 @@ Res.exe('lib/umqtt/simple.py')
 Res.exe('lib/max7219.py')
 Res.exe('lib/mled.py')
 Res.exe('lib/RFBtn.py') # RF315Mhz ,433Mhz
+Res.exe('lib/WebServer.py')
 Res.exe('lib/ADXL345.py')
 Res.exe('lib/hmc5883l.py') # 三軸加速
 Res.exe('lib/mlx90614.py') #額溫

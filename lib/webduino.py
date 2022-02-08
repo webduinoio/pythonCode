@@ -259,18 +259,18 @@ class Config:
         except:
             Config.updateFromString(defaultData)
             Config.save()
-        print(" -=-=- ")
-        print("load:",Config.data)
-        print(" -=-=- ")
+        #print(" -=-=- ")
+        #print("load:",Config.data)
+        #print(" -=-=- ")
         return Config.data
         
     def save():
         file = open('value.js','w')
         data = "var data="+str(Config.data)
         file.write(data)
-        print(" -=-=- ")
-        print("save:",Config.data)
-        print(" -=-=- ")
+        #print(" -=-=- ")
+        #print("save:",Config.data)
+        #print(" -=-=- ")
         file.close()
         return data
 

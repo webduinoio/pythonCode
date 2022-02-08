@@ -1,6 +1,6 @@
 import socket, time
 
-class WebServer:
+class WebServer:  
     
     def __init__(self,board,port=80):
         self.addr = socket.getaddrinfo('0.0.0.0', port)[0][-1]
@@ -62,7 +62,7 @@ class WebServer:
                 config['IP'] = self.board.ip()
                 config['MAC'] = self.board.mac()
                 config['Ver'] = self.board.Ver
-                print("resp:",str(config))
+                #print("resp:",str(config))
                 cs.send("var data="+str(config))
             else:    
                 file = open(filename, "r")
@@ -93,12 +93,12 @@ class WebServer:
             if not line or line == '\r\n':
                 break 
             if len(line)>18 and str(line).find('Content-Length:')>=0:
-                print("contentLen:",line)
+                #print("contentLen:",line)
                 req['Content-Length'] = int(line[16:])
             if len(line)>4 and (line[0:5]=='GET /' or line[0:6]=='POST /'):
                 req['url'] = line.split(' ')
 
-        print("request:",req)
+        #print("request:",req)
 
         if(req['url'][0] == "POST"):
             self.processPost(cs,req)
