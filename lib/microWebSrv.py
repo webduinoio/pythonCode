@@ -290,8 +290,9 @@ class MicroWebSrv :
         if urlPath == '/' :
             for idxPage in self._indexPages :
                 physPath = self._webPath + '/' + idxPage
+                print(self._webPath)
                 if MicroWebSrv._fileExists(physPath) :
-                return physPath
+                    return physPath
         else :
             physPath = self._webPath + urlPath.replace('../', '/')
             if MicroWebSrv._fileExists(physPath) :
