@@ -226,7 +226,7 @@ class Res:
 print("connect...")
 do_connect()
 print("get files...")
-### lib's single file max size: 8256 Bytes
+### lib's single file max size: 8256 Bytes (ESP01)
 Res.exe('lib/utils.py')
 Res.exe('lib/webduino.py')
 Res.exe('lib/urequests.py')

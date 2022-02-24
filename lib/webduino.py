@@ -18,6 +18,7 @@ class WiFi:
     ssid="webduino.io"
     pwd="webduino"
     ip="unknown"
+    
     def disconnect():
         WiFi.sta.disconnect()
 
@@ -37,10 +38,10 @@ class WiFi:
             debug.print("!!!! online callback... !!!!")
         return WiFi.sta.isconnected()
 
-    def enableAP(ssid="esp01",pwd="12345678"):
+    def enableAP(ssid="myboard",pwd="12345678"):
         WiFi.ap = network.WLAN(network.AP_IF)
+        WiFi.ap.active(True)
         WiFi.ap.config(essid=ssid,password=pwd)
-        WiFi.ap.active()
 
     def connect(ssid="webduino.io",pwd="webduino"):
         WiFi.ssid = ssid
@@ -136,7 +137,7 @@ class Board:
     def mac(self):
         return ubinascii.hexlify(network.WLAN().config('mac'),':').decode()
 
-    def enableAP(self):
+    def enableAP(self,ssid='myboard',pwd='12345678'):
         ssid = self.config.data['devSSID']
         pwd = self.config.data['devPasswd']
         self.wifi.enableAP(ssid,pwd)
@@ -273,4 +274,3 @@ class Config:
         #print(" -=-=- ")
         file.close()
         return data
-
