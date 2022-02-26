@@ -114,7 +114,7 @@ class Board:
         self.config = Config
         self.now = 0
         json = self.config.load()
-        print("json:",json)
+        #print("json:",json)
         if(devId == ''):
             if json['devId']=='unknown':
                 json['devId'] = self.mac().replace(':','')

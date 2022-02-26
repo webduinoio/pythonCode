@@ -8,7 +8,7 @@ def do_connect():
     sta_if = network.WLAN(network.STA_IF)
     sta_if.active(True)
     print('connecting to network...')
-    sta_if.connect('webduino.io', 'webduino')
+    sta_if.connect('KingKit_2.4G', 'webduino')
     cnt = 0
     while not sta_if.isconnected():
         cnt = cnt + 1
