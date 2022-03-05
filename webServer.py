@@ -1,5 +1,5 @@
 from webduino import Board
-from uyeelight import Bulb
+#from uyeelight import Bulb
  
 #####################
 try:
@@ -11,8 +11,8 @@ except:
 
 waboard = Board(devId="waboard")
 waboard.enableAP()
-waboard.connect()
-print(waboard.ip())
+#waboard.connect()
+#print(waboard.ip())
 
 """
 bulb = Bulb("192.168.0.95")
