@@ -1,14 +1,15 @@
 import os
-import usocket
-import network,time
-import network , ubinascii
+import usocket, time, ubinascii
+import network
 
 def do_connect():
     global connected
     sta_if = network.WLAN(network.STA_IF)
     sta_if.active(True)
     print('connecting to network...')
-    sta_if.connect('KingKit_2.4G', 'webduino')
+    #sta_if.disconnect()
+    if(not sta_if.isconnected()):
+        sta_if.connect('KingKit_2.4G', 'webduino')
     cnt = 0
     while not sta_if.isconnected():
         cnt = cnt + 1
@@ -227,21 +228,16 @@ print("connect...")
 do_connect()
 print("get files...")
 ### lib's single file max size: 8256 Bytes
-Res.exe('lib/microWebSrv.py') # websever
+"""
 Res.exe('lib/uyeelight.py') #小米燈泡
 Res.exe('lib/adxl345.py')
-Res.exe('lib/utils.py')
-Res.exe('lib/webduino.py')
-Res.exe('lib/urequests.py')
 Res.exe('lib/TM1637.py')
 Res.exe('lib/mfrc522.py')
 Res.exe('lib/ssd1306.py')
 Res.exe('lib/st7789py.py')
-Res.exe('lib/umqtt/simple.py')
 Res.exe('lib/max7219.py')
 Res.exe('lib/mled.py')
 Res.exe('lib/RFBtn.py') # RF315Mhz ,433Mhz
-Res.exe('lib/WebServer.py')
 Res.exe('lib/ADXL345.py')
 Res.exe('lib/hmc5883l.py') # 三軸加速
 Res.exe('lib/mlx90614.py') #額溫
@@ -252,7 +248,16 @@ Res.exe('lib/dfplayer.py') #MP3
 Res.exe('lib/scanplayer.py') #MP3
 Res.exe('lib/d1motor.py') # d1motor
 Res.exe('lib/rfsocket.py') # rfsocket
+Res.exe('lib/utils.py')
+Res.exe('lib/webduino.py')
+Res.exe('lib/urequests.py')
+Res.exe('lib/microWebSrv.py') # websever
+Res.exe('lib/umqtt/simple.py')
+Res.exe('lib/WebServer.py')
 Res.exe('lib/esp32cam/webserver.py') 
 Res.exe('lib/esp32cam/www/index.html')
+"""
+Res.get('','index.html')
+Res.get('','value.js')
 print("========")
 print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
