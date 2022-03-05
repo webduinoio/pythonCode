@@ -11,7 +11,7 @@ class debug:
         debug.state = False
     def print(msg="",msg2="",msg3=""):
         if debug.state:
-            print(msg,msg2)            
+            print(msg,msg2)        
 
 class WiFi:
     onlineCallback = None
@@ -31,7 +31,7 @@ class WiFi:
     def startKeepConnect():
         WiFi.timer = Timer(0)
         WiFi.timer.init(period=3000, mode=Timer.PERIODIC, callback=WiFi.checkConnection)
-        
+    
     def checkConnection(t):
         if not WiFi.sta.isconnected():
             WiFi.connect(WiFi.ssid,WiFi.pwd)
@@ -49,7 +49,8 @@ class WiFi:
         WiFi.sta = sta_if = network.WLAN(network.STA_IF)
         sta_if.active(True)
         debug.print('connecting to network...',WiFi.ssid)
-        sta_if.connect(ssid,pwd)
+        if(not sta_if.isconnected()):
+            sta_if.connect(ssid,pwd)
         if(WiFi.onlineCallback is not None):
             WiFi.onlineCallback(False)
         if not sta_if.isconnected():
@@ -105,7 +106,7 @@ class MQTT:
 class Board:
     
     Ver = '0.1.9b'
-    def __init__(self,devId='',enableAP=False):
+    def __init__(self,devId=''):
         self.wifi = WiFi
         self.mqtt = MQTT
         self.wifi.onlilne(self.online)
@@ -118,15 +119,16 @@ class Board:
         if(devId == ''):
             if json['devId']=='unknown':
                 json['devId'] = self.mac().replace(':','')
-                print('save devId:',json['devId'])
             devId = json['devId']
         else:
             json['devId'] = devId
         self.config.save()
         self.devId = devId
+        self.devPasswd = json['devPasswd']
         self.topic_cmd = self.devId+'/cmd'
-        if enableAP == True:
-            self.enableAP()
+        self.connect(ssid=json['ssid1'],pwd=json['passwd1'])
+        self.enableAP()
+        debug.print('board IP:'+self.ip())
 
     def ap(self):
         return self.wifi.ssid
@@ -137,13 +139,13 @@ class Board:
     def mac(self):
         return ubinascii.hexlify(network.WLAN().config('mac'),':').decode()
 
-    def enableAP(self,ssid='myboard',pwd='12345678'):
+    def enableAP(self):
         ssid = self.config.data['devSSID']
         pwd = self.config.data['devPasswd']
         self.wifi.enableAP(ssid,pwd)
         self.wifi.web = WebServer(self,80)
         self.wifi.web.listener()
-        print("webServer start...")
+        debug.print("webServer start...")
         
     def online(self,status):
         if status:
@@ -156,8 +158,7 @@ class Board:
     def connect(self,ssid='webduino.io',pwd='webduino'):
         while True:
             if self.wifi.connect(ssid,pwd):
-                if self.mqtt.connect('mqtt1.webduino.io','webduino','webduino'):
-                    break
+                break
         debug.print("WiFi Ready , MQTT Ready , ready to go...")
         self.onMsg(self.topic_cmd,self.execCmd)
         self.report('boot')
@@ -219,9 +220,9 @@ class Board:
             f.write('import os,machine\r\n')
             f.write('os.remove("cmd.py")\r\n')
             f.write('from utils import *\r\n')
-            f.write('do_connect("webduino.io","webduino")\r\n')
+            f.write('from webduino import Board\r\n')
+            f.write('Board()\r\n')
             f.write("Utils.save('"+url+"','"+file+"')\r\n")
-            f.write('machine.reset()\r\n')
             f.close()
             self.report('save')
             time.sleep(1)

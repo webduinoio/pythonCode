@@ -49,8 +49,8 @@ class WebServer:
         cs.close() 
 
     def processGet(self,cs,req):
-        print("processGet...")
-        cs.send('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')        
+        #print("processGet...")
+        cs.sendall('HTTP/1.0 200 OK\r\nContent-type: text/html\r\n\r\n')        
         try:
             print("process:"+str(req['url']))
             filename = req['url'][1][1:]
@@ -68,18 +68,16 @@ class WebServer:
                 #print("resp:",str(config))
                 cs.send("var data="+str(config))
             else:
-                print("open file:"+filename)
+                #print("open file:"+filename)
                 file = open(filename, "r")
                 while True:
                     line = file.readline()
-                    print("line:"+line)
-                    time.sleep(0.1)
+                    cs.sendall(line)
                     if(line==""):
                         break
-                    cs.send(line)
                 file.close()         
         except Exception as e:
-            print("Error:",e)
+            print("Error: "+filename)
             pass
         cs.close()
 
@@ -103,7 +101,7 @@ class WebServer:
             if len(line)>4 and (line[0:5]=='GET /' or line[0:6]=='POST /'):
                 req['url'] = line.split(' ')
 
-        print("request:",req)
+        #print("request:",req)
 
         if(req['url'][0] == "POST"):
             self.processPost(cs,req)
@@ -113,4 +111,3 @@ class WebServer:
 
     def listener(self):
         self.ss.setsockopt(socket.SOL_SOCKET, 20, self.acceptSocket)
-

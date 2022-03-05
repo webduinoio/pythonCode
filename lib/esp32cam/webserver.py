@@ -8,7 +8,7 @@ from microWebSrv import MicroWebSrv
 
 class webcam():
 
-    def __init__(self):
+    def __init__(self,port=8080,webPath='/'):
         
         self.saturation = 0
         self.quality = 10
@@ -17,7 +17,8 @@ class webcam():
         self.vflip = 0
         self.hflip = 0
         self.framesize = camera.FRAME_VGA
-
+        self.port = port
+        self.webPath = webPath
         self.routeHandlers = [
             ("/", "GET", self._httpHandlerIndex),
             ("/logo.svg", "GET", self._httpLogo),
@@ -30,8 +31,7 @@ class webcam():
     def run(self):
         self.led = machine.Pin(4, machine.Pin.OUT)
         camera.init(0, format=camera.JPEG, framesize=self.framesize)      #ESP32-CAM
-
-        mws = MicroWebSrv(routeHandlers=self.routeHandlers, webPath="/lib/webserver/")
+        mws = MicroWebSrv(routeHandlers=self.routeHandlers, webPath=self.webPath,port=self.port)
         mws.Start(threaded=True)
         gc.collect()
 

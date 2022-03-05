@@ -1,5 +1,5 @@
 from webduino import Board
- 
+
 #####################
 try:
     import cmd
@@ -8,5 +8,12 @@ except:
     pass
 #####################
 
-waboard = Board(devId="waboard")
-waboard.enableAP()
+board = Board()
+
+
+"""
+print("start webcam...")
+from esp32cam.webserver import webcam
+server = webcam()
+server.run()
+"""

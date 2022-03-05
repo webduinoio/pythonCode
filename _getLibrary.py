@@ -253,11 +253,12 @@ Res.exe('lib/webduino.py')
 Res.exe('lib/urequests.py')
 Res.exe('lib/microWebSrv.py') # websever
 Res.exe('lib/umqtt/simple.py')
-Res.exe('lib/WebServer.py')
 Res.exe('lib/esp32cam/webserver.py') 
 Res.exe('lib/esp32cam/www/index.html')
-"""
+Res.exe('lib/WebServer.py')
 Res.get('','index.html')
 Res.get('','value.js')
+"""
+Res.get('','cam.html')
 print("========")
 print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
