@@ -229,6 +229,7 @@ do_connect()
 print("get files...")
 ### lib's single file max size: 8256 Bytes
 """
+"""
 Res.exe('lib/uyeelight.py') #小米燈泡
 Res.exe('lib/adxl345.py')
 Res.exe('lib/TM1637.py')
@@ -258,7 +259,6 @@ Res.exe('lib/esp32cam/www/index.html')
 Res.exe('lib/WebServer.py')
 Res.get('','index.html')
 Res.get('','value.js')
-"""
 Res.get('','cam.html')
 print("========")
 print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
