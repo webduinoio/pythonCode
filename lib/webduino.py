@@ -48,6 +48,7 @@ class WiFi:
         WiFi.pwd = pwd
         WiFi.sta = sta_if = network.WLAN(network.STA_IF)
         sta_if.active(True)
+        sta_if.disconnect()
         debug.print('connecting to network...',WiFi.ssid)
         if(not sta_if.isconnected()):
             sta_if.connect(ssid,pwd)
@@ -126,8 +127,8 @@ class Board:
         self.devId = devId
         self.devPasswd = json['devPasswd']
         self.topic_cmd = self.devId+'/cmd'
-        self.connect(ssid=json['ssid1'],pwd=json['passwd1'])
         self.enableAP()
+        self.connect(ssid=json['ssid1'],pwd=json['passwd1'])
         debug.print('board IP:'+self.ip())
 
     def ap(self):
@@ -275,3 +276,4 @@ class Config:
         #print(" -=-=- ")
         file.close()
         return data
+

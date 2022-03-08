@@ -30,7 +30,10 @@ class webcam():
 
     def run(self):
         self.led = machine.Pin(4, machine.Pin.OUT)
-        camera.init(0, format=camera.JPEG, framesize=self.framesize)      #ESP32-CAM
+        try:
+            camera.init(0, format=camera.JPEG, framesize=self.framesize)      #ESP32-CAM
+        except:
+            pass
         mws = MicroWebSrv(routeHandlers=self.routeHandlers, webPath=self.webPath,port=self.port)
         mws.Start(threaded=True)
         gc.collect()
