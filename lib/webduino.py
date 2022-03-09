@@ -173,7 +173,10 @@ class Board:
         topic = topic.decode("utf-8")
         msg = msg.decode("utf-8")
         self.topics[topic](msg)
-        
+    
+    def publish(self,topic,msg):
+        self.mqtt.pub(topic,msg);
+
     def loop(self):
         debug.print("run...")
         while True:
@@ -235,6 +238,23 @@ class Config:
     
     def show():
         print(Config.data)
+        
+    def put(key,val):
+        Config.data[key] = val
+        return Config
+    
+    def get(key):
+        if key in Config.data:
+            return Config.data[key]
+        else:
+            return None
+    
+    def remove(key):
+        if key in Config.data:
+            del Config.data[key]
+            return True
+        else:
+            return False
     
     def updateFromString(data): 
         data = data.split('/')
@@ -276,4 +296,3 @@ class Config:
         #print(" -=-=- ")
         file.close()
         return data
-
