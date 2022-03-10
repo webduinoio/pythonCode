@@ -1,6 +1,7 @@
 from webduino import Board,Config
 from machine import Pin, PWM, Timer, WDT
 import usocket, ntptime, random, network, time, machine, camera, ubinascii, os
+import urequests
 
 class GDriver:
     scriptId='AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
@@ -161,20 +162,22 @@ class CamApp():
     def onMsg(topic,msg):
         msg = msg.decode("utf-8")
         topic = topic.decode("utf-8")
-        print(topic+" , "+msg)
-        
+        print("onMsg:",topic+" , "+msg)
+
         # 重開機
         if(topic==(CamApp.name+'/reboot')):
             if(msg=='reset'):
                 CamApp.board.publish(CamApp.name+'/state', 'reboot')
                 time.sleep(1)
                 machine.reset()
+
         # 清除參數
         if(topic==(CamApp.name+'/clear')):
             if(msg=='clear'):
                 Config.remove('webeye')
                 Config.save()
                 CamApp.board.publish(CamApp.name+'/state', 'setOK clear')
+
         # 狀態查詢
         if(topic==(CamApp.name+'/state')):
             if(msg=='ping'):
@@ -206,10 +209,11 @@ class CamApp():
 
         # 攝影開關 enableCron
         if(topic==(CamApp.name+'/enableCron')):
-            webeye['enableCron'] = CamApp.enableCron = bool(msg)
+            webeye['enableCron'] = CamApp.enableCron = bool(msg.replace('False',''))
             Config.put('webeye',webeye)
             Config.save()
             CamApp.board.publish(CamApp.name+'/state', 'setOK enableCron')
+            CamApp.now = 0
 
         # 雲端硬碟網址 folderId
         if(topic==(CamApp.name+'/folderId')):
@@ -256,22 +260,26 @@ class CamApp():
         image = CamApp.cam.snapshot()
         CamApp.board.publish((CamApp.name+'/state'), 'uploading')
         filename = pre+CamApp.getTime()
-        data = GDriver.upload(CamApp.cam.snapshot(),filename)
-        CamApp.board.publish((CamApp.name+'/state'), 'upload '+data)
+        redirectURL = GDriver.upload(CamApp.cam.snapshot(),filename)
+        fileInfo=urequests.get(redirectURL)
+        CamApp.board.publish((CamApp.name+'/state'), 'upload '+str(fileInfo.json()))
         CamApp.snaping = False        
 
     def run(enableCron=True,enableDeepSleepMode=0):
         print("run...")
-        now = 0 #一開始先拍一張照片
-        min = CamApp.sendTime * 60*10 #min
+        CamApp.now = 0 #一開始先拍一張照片
         while True:
             CamApp.wdt.feed()
-            if now % 100 == 0:
+            min = CamApp.sendTime * 60*10 #min
+            if CamApp.now % 100 == 0:
                 CamApp.board.mqtt.client.ping()
+            # debug
+            if(CamApp.now%10==0):
+                print('cronState:'+str(CamApp.enableCron)+' , '+str(int(CamApp.now/10))+'/'+str(int(min/10)))
             # check upload
-            if CamApp.enableCron and (now == min or now == 0):
+            if CamApp.enableCron and (CamApp.now == min or CamApp.now == 0):
                 print("Trigger....")
-                now = 0
+                CamApp.now = 0
                 try:
                     CamApp.board.wifi.checkConnection('')
                     CamApp.snapshot_upload('')
@@ -288,7 +296,7 @@ class CamApp():
             if CamApp.snaping == False:
                 CamApp.board.mqtt.checkMsg()
             time.sleep(0.1)
-            now = now + 1
+            CamApp.now = CamApp.now + 1
 
 
 webeye = {}

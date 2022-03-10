@@ -78,9 +78,6 @@ html,body {
     line-height:60px;
     font-size:20px;
   }
-  .btn.btn-show{
-    width:calc(100%);
-    margin-left:5px;
     overflow:hidden;
   }
   .btn-group.btn-direction-group .btn{
@@ -95,17 +92,14 @@ html,body {
     line-height:60px;
     font-size:20px;
   }  
-  .btn.btn-show{
+  .btn.btn-show {
     width:calc(100% - 0px);
-    margin-left:15px;
   }
   .btn-group.btn-direction-group .btn{
     height:60px;
     line-height:60px;
   }  
 }
-
-
 
 #sweet-modal {
   padding: 0;
