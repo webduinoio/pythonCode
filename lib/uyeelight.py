@@ -16,19 +16,16 @@ class MODE:
     COLOR_FLOW_MODE = 4
     NIGHT_LIGHT_MODE = 5
 
-
 class ACTION:
     LED_RECOVER_STATE = 0
     LED_STAY = 1
     LED_TURN_OFF = 2
  
-
 class SCENE_CLASS:
     COLOR = "color"
     HSV = "hsv"
     CT = "ct"
     AUTO_DELAY_OFF = "auto_delay_off"
-
 
 class SET_ADJUST_ACTION:
     INCREASE = "increase"
@@ -41,10 +38,7 @@ class SET_ADJUST_PROP:
     CT = "ct"
     COLOR = "color"
 
-
 """ API DOCS: https://www.yeelight.com/download/Yeelight_Inter-Operation_Spec.pdf """
-
-
 class Bulb():
     def __init__(self, ip, port=55443, debug=False):
         self.cmd_id = 0
@@ -77,34 +71,19 @@ class Bulb():
         return result[0] == "on"
 
     def change_color_temperature(self, color_temp_val, effect=EFFECT.SUDDEN, duration=30):
-        """
-        :param color_temp_val: between 1700 and 6500K
-        """
         return self._handle_response(self._send_message("set_ct_abx",
                                                         [color_temp_val, effect, duration]))
 
     def set_rgb(self, r, g, b, effect=EFFECT.SUDDEN, duration=30):
-        """
-        :param r: red
-        :param g: green
-        :param b: blue
-        """
         rgb = (r * 65536) + (g * 256) + b
         return self._handle_response(self._send_message("set_rgb",
                                                         [rgb, effect, duration]))
 
     def set_hsv(self, hue, sat, effect=EFFECT.SUDDEN, duration=30):
-        """
-        :param hue: ranges from 0 to 359
-        :param sat:  ranges from 0 to 100
-        """
         return self._handle_response(self._send_message("set_hsv",
                                                         [hue, sat, effect, duration]))
 
     def set_brightness(self, brightness, effect=EFFECT.SUDDEN, duration=30):
-        """
-        :param brightness: between 1 and 100
-        """
         return self._handle_response(self._send_message("set_bright",
                                                         [brightness, effect, duration]))
 
@@ -139,40 +118,22 @@ class Bulb():
                                                         [action, prop]))
 
     def adjust_brightness(self, percentage, duration=30):
-        """
-        :param percentage: the percentage to be adjusted. The range is: -100 ~ 100
-        """
         return self._handle_response(self._send_message("adjust_bright",
                                                         [percentage, duration]))
 
     def adjust_color_temperature(self, percentage, duration=30):
-        """
-        :param percentage: the percentage to be adjusted. The range is: -100 ~ 100
-        """
         return self._handle_response(self._send_message("adjust_ct",
                                                         [percentage, duration]))
 
     def adjust_color(self, percentage, duration=30):
-        """
-         :param percentage: the percentage to be adjusted. The range is: -100 ~ 100
-         """
         return self._handle_response(self._send_message("adjust_color",
                                                         [percentage, duration]))
 
     def set_music(self, host, port, enable=True):
-        """
-        :param host: the IP address of the music server.
-        :param port: the TCP port music application is listening on.
-        :param enable:  0: turn off music mode.
-                           1: turn on music mode.
-        """
         return self._handle_response(self._send_message("set_music",
                                                         [1 if enable else 0, host, port]))
 
     def set_name(self, name):
-        """
-        :param name: the name of the device
-        """
         return self._handle_response(self._send_message("set_name",
                                                         [name]))
 
