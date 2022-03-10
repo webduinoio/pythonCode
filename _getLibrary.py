@@ -251,6 +251,7 @@ Res.exe('lib/d1motor.py') # d1motor
 Res.exe('lib/rfsocket.py') # rfsocket
 Res.exe('lib/utils.py')
 Res.exe('lib/webduino.py')
+Res.exe('lib/Config.py')
 Res.exe('lib/urequests.py')
 Res.exe('lib/microWebSrv.py') # websever
 Res.exe('lib/umqtt/simple.py')

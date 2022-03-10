@@ -257,7 +257,12 @@ class CamApp():
     def snapshot_upload(pre):
         CamApp.snaping = True
         CamApp.board.publish((CamApp.name+'/state'), 'waiting')
-        image = CamApp.cam.snapshot()
+        try:
+            image = CamApp.cam.snapshot()
+        except:
+            CamApp.board.publish((CamApp.name+'/state'), 'except camera failure,reboot !')
+            time.sleep(1)
+            machine.reset()
         CamApp.board.publish((CamApp.name+'/state'), 'uploading')
         filename = pre+CamApp.getTime()
         redirectURL = GDriver.upload(CamApp.cam.snapshot(),filename)
@@ -314,7 +319,7 @@ try:
     led = LED(2)
     led.blink(0.5)
     time.sleep(2)
-    board = Board(devId='webeye01')
+    board = Board(devId='wb211')
     led.blink(0.25)
     ##
     if Config.get('webeye') == None:

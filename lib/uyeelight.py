@@ -1,15 +1,12 @@
 import usocket as socket
 import json, struct
 
-
 class YeeLightException(Exception):
     pass
-
 
 class EFFECT:
     SMOOTH = "smooth"
     SUDDEN = "sudden"
-
 
 class MODE:
     NORMAL = 0
