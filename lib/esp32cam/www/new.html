@@ -24,46 +24,49 @@
       </div>
     </div>
   </div>
+
   <dialog id="cron-modal">
     <h3 class="modal-header">定時拍照</h3>
     <div class="modal-body">
-      <input id='cronEnable' type="checkbox" class='sw'/>
+      <input id='cronEnable' type="checkbox" class='sw' />
       <label id='cronLabel' for="cronEnable">
         <span class="switch-txt" turnOn="開" turnOff="關"></span>
       </label>
-        <div>
-          <input type="radio" id="min1" name="sendTime" value="1" checked>
-          <label for="min1" class='min'>1分鐘</label>
-          <input type="radio" id="min3" name="sendTime" value="3">
-          <label for="min3" class='min'>3分鐘</label>
-          <input type="radio" id="min5" name="sendTime" value="5">
-          <label for="min5" class='min'>5分鐘</label>
-        </div><div>
-          <input type="radio" id="min10" name="sendTime" value="10">
-          <label for="min10" class='min'>10分鐘</label>
-          <input type="radio" id="min15" name="sendTime" value="15">
-          <label for="min15" class='min'>15分鐘</label>
-          <input type="radio" id="min30" name="sendTime" value="30">
-          <label for="min30" class='min'>30分鐘</label>
-        </div>
-
+      <div>
+        <input type="radio" id="min1" name="sendTime" value="1" checked>
+        <label for="min1" class='min'>1分鐘</label>
+        <input type="radio" id="min3" name="sendTime" value="3">
+        <label for="min3" class='min'>3分鐘</label>
+        <input type="radio" id="min5" name="sendTime" value="5">
+        <label for="min5" class='min'>5分鐘</label>
+      </div>
+      <div>
+        <input type="radio" id="min10" name="sendTime" value="10">
+        <label for="min10" class='min'>10分鐘</label>
+        <input type="radio" id="min30" name="sendTime" value="30">
+        <label for="min30" class='min'>30分鐘</label>
+        <input type="radio" id="min60" name="sendTime" value="60">
+        <label for="min60" class='min'>60分鐘</label>
+      </div>
     </div>
     <footer class="modal-footer">
-      <button id="cron-set" type="button">更新</button>
+      <button id="cron-set"   type="button">更新</button>
       <button id="cron-close" type="button">關閉</button>
     </footer>
   </dialog>
+
   <dialog id="folder-modal">
     <h3 class="modal-header">Google雲端硬碟資料夾</h3>
     <div class="modal-body">
       資料夾URL: <input id='folderURL' type="input" name="folderURL" value="" style='display:none'>
     </div>
     <footer class="modal-footer">
-      <button id="folder-open" type="button">開啟資料夾</button>
-      <button id="folder-set" type="button">更新</button>
+      <button id="folder-open"  type="button">開啟資料夾</button>
+      <button id="folder-set"   type="button">更新</button>
       <button id="folder-close" type="button">關閉</button>
     </footer>
   </dialog>
+
   <script src='new.js'></script>
 </body>
 

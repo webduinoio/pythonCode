@@ -65,7 +65,7 @@ html,body {
 }
 
 .btn-group.btn-player-group .btn{
-  width:calc(12%);
+  width: 60px;
   height:60px;
   font-size:32px;
   margin:15px 15px;
@@ -74,8 +74,8 @@ html,body {
 
 @media (max-width:480px){
   .btn{
-    height:50px;
-    line-height:50px;
+    height:60px;
+    line-height:60px;
     font-size:20px;
   }
   .btn.btn-show{
@@ -84,16 +84,16 @@ html,body {
     overflow:hidden;
   }
   .btn-group.btn-direction-group .btn{
-    height:70px;
-    line-height:70px;
+    height:60px;
+    line-height:60px;
   }  
 }
 
 @media (max-width:400px){
   .btn{
-    height:45px;
-    line-height:45px;
-    font-size:18px;
+    height:60px;
+    line-height:60px;
+    font-size:20px;
   }  
   .btn.btn-show{
     width:calc(100% - 0px);
