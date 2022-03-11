@@ -156,7 +156,9 @@ class Res:
             f.close()
             print("OK.")
         except Exception as e:
-            print("QQ:",e)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(e)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
         
 
     def get(url,file):
@@ -169,7 +171,9 @@ class Res:
             f.close()
             print("OK.")
         except Exception as e:
-            print("QQ:",e)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
+            print(e)
+            print("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
     def exe(dir):
@@ -230,34 +234,52 @@ print("get files...")
 ### lib's single file max size: 8256 Bytes
 """
 """
+# 開源必備
+Res.exe('lib/urequests.py')
+Res.exe('lib/umqtt/simple.py')
+
+# Webduino 類別庫
+Res.exe('lib/webduino/led.py')
+Res.exe('lib/webduino/config.py')
+Res.exe('lib/webduino/gdriver.py')
+Res.exe('lib/webduino/camera.py')
+Res.exe('lib/webduino/board.py')
+Res.exe('lib/webduino/mqtt.py')
+Res.exe('lib/webduino/wifi.py')
+Res.exe('lib/webduino/webserver.py')
+Res.exe('lib/webduino/debug.py')
+
+# 傳感器
 Res.exe('lib/uyeelight.py') #小米燈泡
-Res.exe('lib/adxl345.py')
-Res.exe('lib/TM1637.py')
-Res.exe('lib/mfrc522.py')
-Res.exe('lib/ssd1306.py')
-Res.exe('lib/st7789py.py')
-Res.exe('lib/max7219.py')
+Res.exe('lib/mfrc522.py') # RFID
+Res.exe('lib/ssd1306.py') # OLED
+Res.exe('lib/max7219.py') 
 Res.exe('lib/mled.py')
 Res.exe('lib/RFBtn.py') # RF315Mhz ,433Mhz
-Res.exe('lib/ADXL345.py')
 Res.exe('lib/hmc5883l.py') # 三軸加速
 Res.exe('lib/mlx90614.py') #額溫
-Res.exe('lib/i2c_lcd.py') #LCD
-Res.exe('lib/lcd_api.py') #LCD
-Res.exe('lib/heltec/sx127x.py') #LoRa
 Res.exe('lib/dfplayer.py') #MP3
 Res.exe('lib/scanplayer.py') #MP3
 Res.exe('lib/d1motor.py') # d1motor
 Res.exe('lib/rfsocket.py') # rfsocket
-Res.exe('lib/utils.py')
-Res.exe('lib/webduino.py')
-Res.exe('lib/Config.py')
-Res.exe('lib/urequests.py')
-Res.exe('lib/microWebSrv.py') # websever
-Res.exe('lib/umqtt/simple.py')
+
+
+#Res.exe('lib/WebServer.py')
+#Res.exe('lib/utils.py')
+
+Res.exe('lib/adxl345.py')
 Res.exe('lib/esp32cam/webserver.py') 
 Res.exe('lib/esp32cam/www/index.html')
-Res.exe('lib/WebServer.py')
+Res.exe('lib/i2c_lcd.py') #LCD
+
+##### large Files
+##########################
+Res.exe('lib/st7789py.py')
+#Res.exe('lib/ADXL345.py')
+Res.exe('lib/lcd_api.py') #LCD
+Res.exe('lib/heltec/sx127x.py') #LoRa
+Res.exe('lib/TM1637.py')
+Res.exe('lib/microWebSrv.py') # websever
 Res.get('','index.html')
 Res.get('','value.js')
 Res.get('','cam.html')
