@@ -5,8 +5,7 @@ from webduino.camera import Camera
 from webduino.gdriver import GDriver
 
 from machine import WDT
-import ntptime,time, machine
-import urequests
+import ntptime,time, machine, urequests, gc
 
 
 class CamApp():
@@ -129,7 +128,9 @@ class CamApp():
         CamApp.board.publish((CamApp.name+'/state'), 'waiting')
         try:
             image = CamApp.cam.snapshot()
-        except:
+        except Exception as e:
+            print(e)
+            print('')
             CamApp.board.publish((CamApp.name+'/state'), 'except camera failure,reboot !')
             time.sleep(1)
             machine.reset()
@@ -189,7 +190,13 @@ try:
     led = LED(2)
     led.blink(0.5)
     time.sleep(2)
-    board = Board(devId='wb211')
+    ###########################
+    ###########################
+    ###########################
+    board = Board(devId='nina')
+    ###########################
+    ###########################
+    ###########################
     led.blink(0.25)
     ##
     if Config.get('webeye') == None:

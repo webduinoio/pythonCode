@@ -1,4 +1,4 @@
-import time, machine, camera, ubinascii
+import time, machine, camera, ubinascii, gc
 
 class Camera():
     
