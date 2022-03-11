@@ -3,7 +3,7 @@ from webduino.mqtt import MQTT
 from webduino.debug import debug
 from webduino.config import Config
 from webduino.webserver import WebServer
-import time
+import time, ubinascii, network
 
 class Board:
     

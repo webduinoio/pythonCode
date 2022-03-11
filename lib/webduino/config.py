@@ -2,27 +2,27 @@ import os
 
 class Config:
     data = {}
-    
+
     def show():
         print(Config.data)
-        
+
     def put(key,val):
         Config.data[key] = val
         return Config
-    
+
     def get(key):
         if key in Config.data:
             return Config.data[key]
         else:
             return None
-    
+
     def remove(key):
         if key in Config.data:
             del Config.data[key]
             return True
         else:
             return False
-    
+
     def updateFromString(data): 
         data = data.split('/')
         Config.data['ssid1'] = data[0]
@@ -37,7 +37,7 @@ class Config:
         Config.data['zone'] = data[9]
         Config.data['openAp'] = data[10]
         return Config.data
-    
+
     def load(): 
         defaultData = "webduino.io/webduino/////unknown/wa/12345678/global/No"
         data = None
@@ -50,7 +50,7 @@ class Config:
             Config.updateFromString(defaultData)
             Config.save()
         return Config.data
-        
+
     def save():
         file = open('value.js','w')
         data = "var data="+str(Config.data)

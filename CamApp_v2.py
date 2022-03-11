@@ -1,8 +1,8 @@
-from webduino.led import LED
 from webduino.board import Board
-from webduino.gdriver import GDriver
 from webduino.config import Config
+from webduino.led import LED
 from webduino.camera import Camera
+from webduino.gdriver import GDriver
 
 from machine import WDT
 import ntptime,time, machine
@@ -27,7 +27,7 @@ class CamApp():
         mm = "0"+str(mm) if mm < 10 else str(mm)
         ss = "0"+str(ss) if ss < 10 else str(ss)
         return MM+"/"+dd+" "+hh+":"+mm+":"+ss
-    
+
 
     def onMsg(topic,msg):
         msg = msg.decode("utf-8")

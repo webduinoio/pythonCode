@@ -78,7 +78,7 @@ class WebServer:
                 file.close()         
         except Exception as e:
             print("Error: "+filename)
-            pass
+            print(e)
         cs.close()
 
     def acceptSocket(self,sc):

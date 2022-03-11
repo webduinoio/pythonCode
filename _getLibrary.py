@@ -242,13 +242,17 @@ Res.exe('lib/umqtt/simple.py')
 Res.exe('lib/webduino/led.py')
 Res.exe('lib/webduino/config.py')
 Res.exe('lib/webduino/gdriver.py')
-Res.exe('lib/webduino/camera.py')
+Res.exe('lib/webduinuo/camera.py')
 Res.exe('lib/webduino/board.py')
 Res.exe('lib/webduino/mqtt.py')
 Res.exe('lib/webduino/wifi.py')
 Res.exe('lib/webduino/webserver.py')
 Res.exe('lib/webduino/debug.py')
+Res.get('','index.html')
 
+#Res.exe('lib/WebServer.py')
+#Res.exe('lib/utils.py')
+"""
 # 傳感器
 Res.exe('lib/uyeelight.py') #小米燈泡
 Res.exe('lib/mfrc522.py') # RFID
@@ -263,9 +267,6 @@ Res.exe('lib/scanplayer.py') #MP3
 Res.exe('lib/d1motor.py') # d1motor
 Res.exe('lib/rfsocket.py') # rfsocket
 
-
-#Res.exe('lib/WebServer.py')
-#Res.exe('lib/utils.py')
 
 Res.exe('lib/adxl345.py')
 Res.exe('lib/esp32cam/webserver.py') 
@@ -283,5 +284,6 @@ Res.exe('lib/microWebSrv.py') # websever
 Res.get('','index.html')
 Res.get('','value.js')
 Res.get('','cam.html')
+"""
 print("========")
 print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
