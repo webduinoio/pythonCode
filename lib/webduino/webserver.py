@@ -1,4 +1,4 @@
-import socket, time
+import socket, time, machine
 
 class WebServer:  
     
@@ -45,7 +45,11 @@ class WebServer:
             config = self.unquote(formData).decode("utf-8")[7:]
             self.board.config.updateFromString(config)
             self.board.config.save()
-            cs.send("Save OK") 
+            cs.send("<h1>Save OK, Restart...<h1>")
+            cs.close()
+            print("Restart...")
+            time.sleep(2)
+            machine.reset()
         cs.close() 
 
     def processGet(self,cs,req):
@@ -89,7 +93,6 @@ class WebServer:
         #print('client connected from', addr)
         cl_file = cs.makefile('rwb', 0)
         req['stream'] = cl_file
-        test = ''
         while True: 
             line = cl_file.readline().decode("utf-8")
             #print("line:",line)

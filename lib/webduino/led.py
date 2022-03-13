@@ -30,7 +30,7 @@ class LED:
             else:
                 self.on()
     
-    def blink(self,peroid):
+    def blink(self,peroid=0.5):
         _p_ = int(peroid*1000)
         if _p_ == 0:
             self.isBlink = False

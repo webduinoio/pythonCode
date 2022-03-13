@@ -17,8 +17,7 @@ class CamApp():
         data['scriptId'] = 'AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
         return data
     
-    def init(board):
-        CamApp.name = board.devId
+    def init():
         CamApp.cfg = JSONFile('webeye.cfg',CamApp.getDefaultCfg())
         ##
         GDriver.scriptURL = CamApp.cfg.get('scriptId')
@@ -29,13 +28,23 @@ class CamApp():
         CamApp.wdt = WDT(timeout=3*60*1000)
         CamApp.snaping = False
         CamApp.led = LED(4)
+        CamApp.led.on()
         print("cam init...")
         CamApp.cam = Camera
         CamApp.cam.init()
-        print("init CamApp...")
-        CamApp.board = board
+        print("init board...")
+        CamApp.led.blink(0.5)
+        CamApp.board = Board(devId='new')
+        CamApp.name = CamApp.board.devId
+        print("topic subscribe...")
         CamApp.board.mqtt.sub(CamApp.name+'/#',CamApp.onMsg)
         CamApp.board.publish(CamApp.name+'/state', 'ready '+str(CamApp.cfg.data))
+        print("set RTC...")
+        CamApp.setRTC()
+        CamApp.led.blink(0)
+        gc.collect()
+
+    def setRTC():
         print("set ntptime & rtc")
         ntptime.NTP_DELTA = ntptime.NTP_DELTA - 8*60*60
         setNTPTime = False
@@ -46,8 +55,7 @@ class CamApp():
             except Exception as e:
                 print("ntptime error !")
                 print(e)
-        CamApp.rtc = machine.RTC()
-        gc.collect()
+        CamApp.rtc = machine.RTC()        
 
     def getTime():
         _time = CamApp.rtc.datetime()
@@ -192,8 +200,7 @@ except:
     pass
 #####################
 try:
-    time.sleep(2)
-    CamApp.init(Board(devId='new'))
+    CamApp.init()
     CamApp.run(enableDeepSleepMode = 0) # 0 min: do not deepsleep
 except Exception as e:
     print(e)
