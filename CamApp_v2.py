@@ -1,5 +1,5 @@
 from webduino.board import Board
-from webduino.config import WebEyeCfg
+from webduino.config import JSONFile
 from webduino.led import LED
 from webduino.camera import Camera
 from webduino.gdriver import GDriver
@@ -8,7 +8,47 @@ from machine import WDT
 import ntptime,time, machine, urequests, gc, os
 
 class CamApp():
+
+    def getDefaultCfg():
+        data = {}
+        data['sendTime'] = 5
+        data['enableCron'] = False
+        data['folderId'] = '1c3fen96e5NFtzdRFMI1KnMc9XvqydjI9'
+        data['scriptId'] = 'AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
+        return data
     
+    def init(board):
+        CamApp.name = board.devId
+        CamApp.cfg = JSONFile('webeye.cfg',CamApp.getDefaultCfg())
+        ##
+        GDriver.scriptURL = CamApp.cfg.get('scriptId')
+        GDriver.folderId = CamApp.cfg.get('folderId')
+        CamApp.sendTime = CamApp.cfg.get('sendTime')
+        CamApp.enableCron = CamApp.cfg.get('enableCron')
+        ##
+        CamApp.wdt = WDT(timeout=3*60*1000)
+        CamApp.snaping = False
+        CamApp.led = LED(4)
+        print("cam init...")
+        CamApp.cam = Camera
+        CamApp.cam.init()
+        print("init CamApp...")
+        CamApp.board = board
+        CamApp.board.mqtt.sub(CamApp.name+'/#',CamApp.onMsg)
+        CamApp.board.publish(CamApp.name+'/state', 'ready '+str(CamApp.cfg.data))
+        print("set ntptime & rtc")
+        ntptime.NTP_DELTA = ntptime.NTP_DELTA - 8*60*60
+        setNTPTime = False
+        while(not setNTPTime):
+            try:
+                ntptime.settime()
+                setNTPTime = True
+            except Exception as e:
+                print("ntptime error !")
+                print(e)
+        CamApp.rtc = machine.RTC()
+        gc.collect()
+
     def getTime():
         _time = CamApp.rtc.datetime()
         MM =  _time[1]
@@ -92,46 +132,6 @@ class CamApp():
             CamApp.cfg.save()
             CamApp.board.publish(CamApp.name+'/state', 'setOK scriptURL')
 
-    def getDefaultCfg():
-        data = {}
-        data['sendTime'] = 5
-        data['enableCron'] = False
-        data['folderId'] = '1c3fen96e5NFtzdRFMI1KnMc9XvqydjI9'
-        data['scriptId'] = 'AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
-        return data
-
-    def init(board):
-        CamApp.name = board.devId
-        CamApp.cfg = JSONFile('webeye.cfg',CamApp.getDefaultCfg)
-        ##
-        GDriver.scriptURL = CamApp.cfg['scriptId']
-        GDriver.folderId = CamApp.cfg['folderId']
-        CamApp.sendTime = CamApp.cfg['sendTime']
-        CamApp.enableCron = CamApp.cfg['enableCron']
-        ##        
-        CamApp.wdt = WDT(timeout=3*60*1000)
-        CamApp.snaping = False
-        CamApp.led = LED(4)
-        print("cam init...")
-        CamApp.cam = Camera
-        CamApp.cam.init()
-        print("init CamApp...")
-        CamApp.board = board
-        CamApp.board.mqtt.sub(CamApp.name+'/#',CamApp.onMsg)
-        CamApp.board.publish(CamApp.name+'/state', 'ready '+str(CamApp.cfg))
-        print("set ntptime & rtc")
-        ntptime.NTP_DELTA = ntptime.NTP_DELTA - 8*60*60
-        setNTPTime = False
-        while(not setNTPTime):
-            try:
-                ntptime.settime()
-                setNTPTime = True
-            except Exception as e:
-                print("ntptime error !")
-                print(e)
-        CamApp.rtc = machine.RTC()
-        gc.collect()
-
     def snapshot_upload(pre):
         CamApp.snaping = True
         CamApp.board.publish((CamApp.name+'/state'), 'waiting')
@@ -193,7 +193,7 @@ except:
 #####################
 try:
     time.sleep(2)
-    CamApp.init(Board(devId='newFolder'))
+    CamApp.init(Board(devId='new'))
     CamApp.run(enableDeepSleepMode = 0) # 0 min: do not deepsleep
 except Exception as e:
     print(e)
