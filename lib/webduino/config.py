@@ -57,3 +57,46 @@ class Config:
         file.write(data)
         file.close()
         return data
+
+
+class JSONFile:
+    
+    def __init__(self,filename,default={}):
+        self.filename = filename
+        self.data = {}
+        try:
+            self.load()
+        except:
+            self.data = default
+
+    def show(self):
+        print(self.data)
+
+    def put(self,key,val):
+        self.data[key] = val
+        return self
+
+    def get(self,key):
+        if key in self.data:
+            return self.data[key]
+        else:
+            return None
+
+    def remove(self,key):
+        if key in self.data:
+            del self.data[key]
+            return True
+        else:
+            return False
+
+    def load(self): 
+        file = open(self.filename,'r')
+        self.data = eval(file.readline())
+        file.close()
+        return self.data
+
+    def save(self):
+        file = open(self.filename,'w')
+        file.write(str(self.data))
+        file.close()
+        return self.data

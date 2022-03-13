@@ -1,17 +1,13 @@
 from webduino.board import Board
-from webduino.config import Config
+from webduino.config import WebEyeCfg
 from webduino.led import LED
 from webduino.camera import Camera
 from webduino.gdriver import GDriver
 
 from machine import WDT
-import ntptime,time, machine, urequests, gc
-
+import ntptime,time, machine, urequests, gc, os
 
 class CamApp():
-    
-    def setSendTime(sendTime=2):
-        CamApp.sendTime = sendTime
     
     def getTime():
         _time = CamApp.rtc.datetime()
@@ -26,7 +22,6 @@ class CamApp():
         mm = "0"+str(mm) if mm < 10 else str(mm)
         ss = "0"+str(ss) if ss < 10 else str(ss)
         return MM+"/"+dd+" "+hh+":"+mm+":"+ss
-
 
     def onMsg(topic,msg):
         msg = msg.decode("utf-8")
@@ -43,8 +38,7 @@ class CamApp():
         # 清除參數
         if(topic==(CamApp.name+'/clear')):
             if(msg=='clear'):
-                Config.remove('webeye')
-                Config.save()
+                os.remove(CamApp.cfg.filename)
                 CamApp.board.publish(CamApp.name+'/state', 'setOK clear')
 
         # 狀態查詢
@@ -63,13 +57,13 @@ class CamApp():
 
         # 取得資訊 info
         if(topic==(CamApp.name+'/info')):
-            CamApp.board.publish(CamApp.name+'/state', 'info '+str(webeye))
+            CamApp.board.publish(CamApp.name+'/state', 'info '+str(CamApp.cfg.data))
 
         # 間隔時間 sendTime
         if(topic==(CamApp.name+'/sendTime')):
-            webeye['sendTime'] = CamApp.sendTime = int(msg)
-            Config.put('webeye',webeye)
-            Config.save()
+            CamApp.sendTime = int(msg)
+            CamApp.cfg.put('sendTime',CamApp.sendTime)
+            CamApp.cfg.save()
             CamApp.board.publish(CamApp.name+'/state', 'setOK sendTime')
 
         # 拍照 snapshot
@@ -78,28 +72,43 @@ class CamApp():
 
         # 攝影開關 enableCron
         if(topic==(CamApp.name+'/enableCron')):
-            webeye['enableCron'] = CamApp.enableCron = bool(msg.replace('False',''))
-            Config.put('webeye',webeye)
-            Config.save()
+            CamApp.enableCron = bool(msg.replace('False',''))
+            CamApp.cfg.put('enableCron',CamApp.enableCron)
+            CamApp.cfg.save()
             CamApp.board.publish(CamApp.name+'/state', 'setOK enableCron')
             CamApp.now = 0
 
         # 雲端硬碟網址 folderId
         if(topic==(CamApp.name+'/folderId')):
-            webeye['folderId'] = GDriver.folderId = msg
-            Config.put('webeye',webeye)
-            Config.save()
+            GDriver.folderId = msg
+            CamApp.cfg.put('folderId',GDriver.folderId)
+            CamApp.cfg.save()
             CamApp.board.publish(CamApp.name+'/state', 'setOK folderId')
 
         # 雲端硬碟腳本網址 scriptURL
         if(topic==(CamApp.name+'/scriptURL')):
-            webeye['scriptURL'] = GDriver.scriptURL = msg
-            Config.put('webeye',webeye)
-            Config.save()
+            GDriver.scriptURL = msg
+            CamApp.cfg.put('scriptURL',GDriver.scriptURL)
+            CamApp.cfg.save()
             CamApp.board.publish(CamApp.name+'/state', 'setOK scriptURL')
+
+    def getDefaultCfg():
+        data = {}
+        data['sendTime'] = 5
+        data['enableCron'] = False
+        data['folderId'] = '1c3fen96e5NFtzdRFMI1KnMc9XvqydjI9'
+        data['scriptId'] = 'AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
+        return data
 
     def init(board):
         CamApp.name = board.devId
+        CamApp.cfg = JSONFile('webeye.cfg',CamApp.getDefaultCfg)
+        ##
+        GDriver.scriptURL = CamApp.cfg['scriptId']
+        GDriver.folderId = CamApp.cfg['folderId']
+        CamApp.sendTime = CamApp.cfg['sendTime']
+        CamApp.enableCron = CamApp.cfg['enableCron']
+        ##        
         CamApp.wdt = WDT(timeout=3*60*1000)
         CamApp.snaping = False
         CamApp.led = LED(4)
@@ -109,7 +118,7 @@ class CamApp():
         print("init CamApp...")
         CamApp.board = board
         CamApp.board.mqtt.sub(CamApp.name+'/#',CamApp.onMsg)
-        CamApp.board.publish(CamApp.name+'/state', 'ready '+str(webeye))
+        CamApp.board.publish(CamApp.name+'/state', 'ready '+str(CamApp.cfg))
         print("set ntptime & rtc")
         ntptime.NTP_DELTA = ntptime.NTP_DELTA - 8*60*60
         setNTPTime = False
@@ -147,7 +156,7 @@ class CamApp():
         while True:
             CamApp.wdt.feed()
             min = CamApp.sendTime * 60*10 #min
-            if CamApp.now % 100 == 0:
+            if CamApp.now % (5*60*10) == 0:
                 CamApp.board.mqtt.client.ping()
             # debug
             if(CamApp.now%10==0):
@@ -175,8 +184,6 @@ class CamApp():
             CamApp.now = CamApp.now + 1
 
 
-webeye = {}
-
 #####################
 try:
     import cmd
@@ -185,41 +192,9 @@ except:
     pass
 #####################
 try:
-    flash = LED(4,strong=5)
-    flash.blink(0.25)
-    led = LED(2)
-    led.blink(0.5)
     time.sleep(2)
-    ###########################
-    ###########################
-    ###########################
-    board = Board(devId='nina')
-    ###########################
-    ###########################
-    ###########################
-    led.blink(0.25)
-    ##
-    if Config.get('webeye') == None:
-        webeye['enableCron'] = False
-        webeye['sendTime'] = 5
-        webeye['folderId'] = '1L25XnMlt16zSA_6eUT0iYiO0LCWC3xzB'
-        webeye['scriptId'] = 'AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
-        Config.put('webeye',webeye)
-        Config.save()
-    else:
-        webeye = Config.get('webeye')
-    ##
-    GDriver.scriptURL = webeye['scriptId']
-    GDriver.folderId = webeye['folderId']
-    ##
-    CamApp.init(board)
-    led.blink(0)
-    flash.blink(0)
-    CamApp.folderId = webeye['folderId']
-    CamApp.sendTime = webeye['sendTime']
-    CamApp.enableCron = webeye['enableCron']
-    CamApp.run(enableDeepSleepMode = 0) # do not deepsleep
-
+    CamApp.init(Board(devId='newFolder'))
+    CamApp.run(enableDeepSleepMode = 0) # 0 min: do not deepsleep
 except Exception as e:
     print(e)
     print('')
