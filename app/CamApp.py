@@ -28,12 +28,11 @@ class CamApp():
         CamApp.wdt = WDT(timeout=3*60*1000)
         CamApp.snaping = False
         CamApp.led = LED(ledPin)
-        CamApp.led.on()
         print("cam init...")
+        CamApp.led.blink(0.5)
         CamApp.cam = Camera
         CamApp.cam.init()
         print("init board...")
-        CamApp.led.blink(0.5)
         CamApp.board = Board(deviceId)
         CamApp.name = CamApp.board.devId
         CamApp.reg_cmd()
@@ -214,7 +213,7 @@ except:
     pass
 #####################
 try:
-    CamApp.init(ledPin=2)
+    CamApp.init(ledPin=4)
     CamApp.run(enableDeepSleepMode = 0) # 0 min: do not deepsleep
 except Exception as e:
     print(e)

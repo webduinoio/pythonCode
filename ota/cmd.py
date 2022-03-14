@@ -250,6 +250,7 @@ def install(deviceId=''):
     
     from utils import Utils
     from webduino.config import Config
+    Utils.save('https://marty5499.github.io/pythonCode/app/boot.py','boot.py')
     Utils.save('https://marty5499.github.io/pythonCode/app/CamApp.py','main.py')
     Config.load()
     if(not deviceId == ''):
@@ -262,7 +263,7 @@ def install(deviceId=''):
     print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
 
-#install(deviceId = 'marty') # force setting deviceId
-install()
+install(deviceId = 'marty') # force setting deviceId
+#install()
 time.sleep(1)
 machine.reset()
