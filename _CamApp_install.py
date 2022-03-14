@@ -1,6 +1,4 @@
-import os
-import usocket, time, ubinascii
-import network
+import os, usocket, time, ubinascii, network
 
 def do_connect():
     global connected
@@ -128,7 +126,6 @@ def head(url, **kw):
     return request("HEAD", url, **kw)
 
 def get(url, **kw):
-    print(">>>get>>>>",url)
     return request("GET", url, **kw)
 
 def post(url, **kw):
@@ -226,36 +223,43 @@ class Res:
                 pass
         os.chdir('/')
 
-print("connect...")
-do_connect()
-print("get files...")
 
-# 開源必備
-Res.exe('lib/urequests.py')
-Res.exe('lib/umqtt/simple.py')
+def install(deviceId=''):
 
-# Webduino 類別庫
-Res.exe('lib/webduino/led.py')
-Res.exe('lib/webduino/config.py')
-Res.exe('lib/webduino/gdriver.py')
-Res.exe('lib/webduino/camera.py')
-Res.exe('lib/webduino/board.py')
-Res.exe('lib/webduino/mqtt.py')
-Res.exe('lib/webduino/wifi.py')
-Res.exe('lib/webduino/webserver.py')
-Res.exe('lib/webduino/debug.py')
-Res.exe('lib/utils.py') # save url to file
-Res.get('','index.html')
+    # WiFi Connect
+    print("connect...")
+    do_connect()
+    print("get files...")
 
-from utils import *
-Utils.save('https://marty5499.github.io/pythonCode/app/CamApp.py','main.py')
+    # 開源必備
+    Res.exe('lib/urequests.py')
+    Res.exe('lib/umqtt/simple.py')
 
-from webduino.config import Config
-print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-deviceId = 'wb210'
-print("-    Device ID: ["+deviceId+"]    -")
-Config.load()
-Config.data['devId'] = deviceId
-Config.save()
-print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
-print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
+    # Webduino 類別庫
+    Res.exe('lib/webduino/led.py')
+    Res.exe('lib/webduino/config.py')
+    Res.exe('lib/webduino/gdriver.py')
+    Res.exe('lib/webduino/camera.py')
+    Res.exe('lib/webduino/board.py')
+    Res.exe('lib/webduino/mqtt.py')
+    Res.exe('lib/webduino/wifi.py')
+    Res.exe('lib/webduino/webserver.py')
+    Res.exe('lib/webduino/debug.py')
+    Res.exe('lib/utils.py') # save url to file
+    Res.get('','index.html')
+    
+    from utils import Utils
+    Utils.save('https://marty5499.github.io/pythonCode/app/CamApp.py','main.py')
+
+    from webduino.config import Config
+    print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+    print("-    Device ID: ["+deviceId+"]    -")
+    Config.load()
+    if(not default == ''):
+        Config.data['devId'] = deviceId
+    Config.save()
+    print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
+    print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
+
+#install(deviceId = 'marty') # force setting deviceId
+install()
