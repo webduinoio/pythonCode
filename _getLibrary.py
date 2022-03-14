@@ -249,9 +249,9 @@ Res.exe('lib/webduino/wifi.py')
 Res.exe('lib/webduino/webserver.py')
 Res.exe('lib/webduino/debug.py')
 Res.get('','index.html')
+Res.exe('lib/utils.py')
 
 #Res.exe('lib/WebServer.py')
-#Res.exe('lib/utils.py')
 """
 # 傳感器
 Res.exe('lib/uyeelight.py') #小米燈泡

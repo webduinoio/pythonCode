@@ -3,11 +3,11 @@ from webduino.mqtt import MQTT
 from webduino.debug import debug
 from webduino.config import Config
 from webduino.webserver import WebServer
-import time, ubinascii, network
+import time, ubinascii, network, machine, os
 
 class Board:
     
-    Ver = '0.1.9b'
+    Ver = '0.2.0b'
     def __init__(self,devId=''):
         self.wifi = WiFi
         self.mqtt = MQTT
@@ -103,21 +103,31 @@ class Board:
 
     def report(self,cmd):
         report = cmd + ' '+self.devId
+        print("publish["+self.topic_report+"] "+report)
         self.mqtt.pub(self.topic_report,report)
+        print("publish OK")
     
     def execCmd(self,data):
         dataArgs = data.split(' ')
         print("exceCmd:",dataArgs)
         cmd = dataArgs[0]
+        
         if cmd == 'reboot':
             self.report('reboot')
             time.sleep(1)
+            print("restart...")
             machine.reset()
+
+        elif cmd == 'ping':
+            self.report('pong')
+
         elif cmd == 'reset':
             os.remove('main.py')
             self.report('reset')
             time.sleep(1)
             machine.reset()
+
+        # 'save 
         elif cmd == 'save':
             url = dataArgs[1]
             file = dataArgs[2]
@@ -125,8 +135,8 @@ class Board:
             f.write('import os,machine\r\n')
             f.write('os.remove("cmd.py")\r\n')
             f.write('from utils import *\r\n')
-            f.write('from webduino import Board\r\n')
-            f.write('Board()\r\n')
+            f.write('from webduino.board import Board\r\n')
+            f.write('Board(devId="ota")\r\n') # wifi connect()
             f.write("Utils.save('"+url+"','"+file+"')\r\n")
             f.close()
             self.report('save')

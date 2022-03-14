@@ -39,7 +39,7 @@ class Config:
         return Config.data
 
     def load(): 
-        defaultData = "webduino.io/webduino/////unknown/wa/12345678/global/No"
+        defaultData = "webduino.io/webduino/////unknown/webduino/12345678/global/No"
         data = None
         try:
             file = open('value.js','r')
@@ -68,6 +68,7 @@ class JSONFile:
             self.load()
         except:
             self.data = default
+            self.save()
 
     def show(self):
         print(self.data)
