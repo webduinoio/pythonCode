@@ -31,7 +31,7 @@ class WiFi:
     def enableAP(ssid="myboard",pwd="12345678"):
         WiFi.ap = network.WLAN(network.AP_IF)
         WiFi.ap.active(True)
-        WiFi.ap.config(essid=ssid,password=pwd)
+        WiFi.ap.config(essid=ssid,password=pwd,authmode=3)
 
     def connect(ssid="webduino.io",pwd="webduino"):
         WiFi.ssid = ssid

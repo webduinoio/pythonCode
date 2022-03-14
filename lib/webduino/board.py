@@ -20,6 +20,7 @@ class Board:
         if(devId == ''):
             json['devId'] = devId = self.mac().replace(':','')[-4:]
         json['devId'] = devId
+        print("Device ID:"+devId)
         self.config.save()
         self.devId = devId
         self.devPasswd = json['devPasswd']
