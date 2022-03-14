@@ -141,7 +141,7 @@ class Board:
             f.write('os.remove("cmd.py")\r\n')
             f.write('from utils import *\r\n')
             f.write('from webduino.board import Board\r\n')
-            f.write('Board(devId="ota")\r\n') # wifi connect()
+            f.write('Board()\r\n') # wifi connect()
             f.write("Utils.save('"+url+"','"+file+"')\r\n")
             f.close()
             self.report('save')
