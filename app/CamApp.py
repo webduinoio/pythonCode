@@ -213,7 +213,7 @@ except:
     pass
 #####################
 try:
-    CamApp.init(ledPin=4)
+    CamApp.init(ledPin=2)
     CamApp.run(enableDeepSleepMode = 0) # 0 min: do not deepsleep
 except Exception as e:
     print(e)
