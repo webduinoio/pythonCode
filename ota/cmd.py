@@ -3,7 +3,7 @@ from utils import *
 from webduino.board import Board
 from webduino.config import Config
 
-deviceId = 'marty'
+deviceId = 'wb210'
 Config.load()
 Config.data['devId'] = deviceId
 Config.save()
