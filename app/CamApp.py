@@ -58,47 +58,55 @@ class CamApp():
 
     #重新開機
     def cmd_reboot(args):
+        print("cmd_reboot")
         CamApp.board.publish(CamApp.name+'/state', 'reboot')
         time.sleep(1)
         machine.reset()        
 
     # 清除參數
     def cmd_clear(args):
+        print("cmd_clear")
         os.remove(CamApp.cfg.filename)
         CamApp.board.publish(CamApp.name+'/state', 'setOK clear')
     
     # 狀態查詢
     def cmd_state(args):
-        if(args[0]=='ping'):
+        print("cmd_state:"+args)
+        if(args=='ping'):
             CamApp.board.publish(CamApp.name+'/state', 'pong')
-        if(args[0]=='time'):
+        if(args=='time'):
             CamApp.board.publish(CamApp.name+'/state', CamApp.getTime())
 
     # 補光燈
     def cmd_led(args):
+        print("cmd_led:"+args)
         try:
-            CamApp.led.on(int(args[0]))
+            CamApp.led.on(int(args))
         except:
             CamApp.led.on(1000)
 
     # 取得資訊 info
     def cmd_info(args):
+        print("cmd_info")
         CamApp.board.publish(CamApp.name+'/state', 'info '+str(CamApp.cfg.data))
     
     # 間隔時間 sendTime
     def cmd_sendTime(args):
-        CamApp.sendTime = int(args[0])
+        print("cmd_sendTime:"+args)
+        CamApp.sendTime = int(args)
         CamApp.cfg.put('sendTime',CamApp.sendTime)
         CamApp.cfg.save()
         CamApp.board.publish(CamApp.name+'/state', 'setOK sendTime')    
 
     # 拍照 snapshot
     def cmd_snapshot(args):
+        print("cmd_snapshot")
         CamApp.snapshot_upload('snap-')
         
     # 攝影開關 enableCron
     def cmd_enableCron(args):
-        CamApp.enableCron = bool(args[0].replace('False',''))
+        print("cmd_enableCron:"+args)
+        CamApp.enableCron = bool(args.replace('False',''))
         CamApp.cfg.put('enableCron',CamApp.enableCron)
         CamApp.cfg.save()
         CamApp.board.publish(CamApp.name+'/state', 'setOK enableCron')
@@ -113,7 +121,8 @@ class CamApp():
 
     # 雲端硬碟腳本網址 scriptURL
     def cmd_scriptURL(args):
-        GDriver.scriptURL = args[0]
+        print("cmd_scriptURL:"+args)
+        GDriver.scriptURL = args
         CamApp.cfg.put('scriptURL',GDriver.scriptURL)
         CamApp.cfg.save()
         CamApp.board.publish(CamApp.name+'/state', 'setOK scriptURL')
