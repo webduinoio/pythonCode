@@ -127,7 +127,6 @@ class URL:
         return request("HEAD", url, **kw)
 
     def get(url, **kw):
-        print(">>>get>>>>",url)
         return request("GET", url, **kw)
 
     def post(url, **kw):
@@ -148,14 +147,12 @@ class Utils:
     def save(url,file):
         try:
             response = URL.get(url)
-            print(">>",len(response.text) )
-            print("get file:",file,'size:',len(response.text),',save to:',file)
             f = open(file, 'w')
-            f.write(response.text)
+            size = f.write(response.text)
             f.close()
-            print("OK.")
+            print(url,'=>',file,' '+str(size))
         except Exception as e:
-            print("QQ:",e)
+            print("download failure:",e)
 
     def mkdir(dir):
         srcDir = dir
