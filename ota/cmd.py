@@ -1,3 +1,9 @@
+board_device_id = 'marty'
+
+
+
+
+
 import os, usocket, time, ubinascii, network, machine
 
 def do_connect():
@@ -263,7 +269,7 @@ def install(deviceId=''):
     print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
     print('Mac address:',ubinascii.hexlify(network.WLAN().config('mac'),':').decode())
 
-install(deviceId = 'marty') # force setting deviceId
+install(deviceId = board_device_id) # force setting deviceId
 #install()
 time.sleep(1)
 machine.reset()
