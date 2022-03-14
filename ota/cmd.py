@@ -1,4 +1,4 @@
-import os, usocket, time, ubinascii, network
+import os, usocket, time, ubinascii, network, machine
 
 def do_connect():
     global connected
@@ -264,3 +264,5 @@ def install(deviceId=''):
 
 #install(deviceId = 'marty') # force setting deviceId
 install()
+time.sleep(1)
+machine.reset()
