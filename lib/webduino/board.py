@@ -8,7 +8,7 @@ import time, ubinascii, network, machine, os
 class Board:
     
     Ver = '0.2.0b'
-    def __init__(self,devId=''):
+    def __init__(self,devId=''): 
         self.wifi = WiFi
         self.mqtt = MQTT
         self.wifi.onlilne(self.online)
@@ -17,13 +17,9 @@ class Board:
         self.config = Config
         self.now = 0
         json = self.config.load()
-        #print("json:",json)
         if(devId == ''):
-            if json['devId']=='unknown':
-                json['devId'] = self.mac().replace(':','')
-            devId = json['devId']
-        else:
-            json['devId'] = devId
+            json['devId'] = devId = self.mac().replace(':','')[-4:]
+        json['devId'] = devId
         self.config.save()
         self.devId = devId
         self.devPasswd = json['devPasswd']
@@ -62,17 +58,20 @@ class Board:
             if self.wifi.connect(ssid,pwd):
                 break
         debug.print("WiFi Ready , MQTT Ready , ready to go...")
-        self.onMsg(self.topic_cmd,self.execCmd)
+        self.mqtt.sub(self.devId+"/#",self.dispatch)
+        self.onTopic('cmd',self.execCmd)
         self.report('boot')
         return self
         
-    def onMsg(self,topic,cbFunc):
+    def onTopic(self,topic,cbFunc):
         self.topics[topic] = cbFunc
-        self.mqtt.sub(topic,self.dispatch)
+        
         
     def dispatch(self,topic,msg):
         topic = topic.decode("utf-8")
         msg = msg.decode("utf-8")
+        topic = topic.replace(self.devId+"/",'')
+        print("topic:"+topic+",msg:"+msg)
         self.topics[topic](msg)
     
     def publish(self,topic,msg):
@@ -107,6 +106,12 @@ class Board:
         self.mqtt.pub(self.topic_report,report)
         print("publish OK")
     
+    def setExtraCmdProcess(self,cb):
+        Board.extraCmd = cb
+        
+    def extraCmd(cmd,dataArgs):
+        pass
+        
     def execCmd(self,data):
         dataArgs = data.split(' ')
         print("exceCmd:",dataArgs)
@@ -127,7 +132,7 @@ class Board:
             time.sleep(1)
             machine.reset()
 
-        # 'save 
+        # save 
         elif cmd == 'save':
             url = dataArgs[1]
             file = dataArgs[2]
@@ -142,3 +147,11 @@ class Board:
             self.report('save')
             time.sleep(1)
             machine.reset()
+
+        else:
+            try:
+                cmd = dataArgs.pop(0)
+                Board.extraCmd(cmd,dataArgs)
+            except Exception as e:
+                print("Board extraCmd error:"+e)
+                pass
