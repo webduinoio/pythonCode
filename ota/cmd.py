@@ -1,8 +1,15 @@
 board_devSSID = ''
 board_device_id = ''
 
+import os
+import time
+
+import machine
+import network
+import ubinascii
+import usocket
 from webduino.board import Board
-import os, usocket, time, ubinascii, network, machine
+
 
 class Response:
 
@@ -147,7 +154,7 @@ class Res:
 
     def get(url,file):
         try:
-            response = get('https://marty5499.github.io/pythonCode/'+url)
+            response = get('https://webduinoio.github.io/pythonCode/'+url)
             print(">>",len(response.text) )
             print("get file:",file,'size:',len(response.text),',save to:',file)
             f = open(file, 'w')
@@ -237,8 +244,8 @@ def install(deviceId=''):
     
     from utils import Utils
     from webduino.config import Config
-    Utils.save('https://marty5499.github.io/pythonCode/app/boot.py','boot.py')
-    Utils.save('https://marty5499.github.io/pythonCode/app/CamApp.py','main.py')
+    Utils.save('https://webduinoio.github.io/pythonCode/app/boot.py','boot.py')
+    Utils.save('https://webduinoio.github.io/pythonCode/app/CamApp.py','main.py')
     Config.load()
     if(not deviceId == ''):
         Config.data['devId'] = deviceId

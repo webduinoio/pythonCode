@@ -160,7 +160,7 @@ class Res:
 
     def get(url,file):
         try:
-            response = get('https://marty5499.github.io/pythonCode/'+url)
+            response = get('https://webduinoio.github.io/pythonCode/'+url)
             print(">>",len(response.text) )
             print("get file:",file,'size:',len(response.text),',save to:',file)
             f = open(file, 'w')
@@ -249,7 +249,7 @@ def install(deviceId=''):
     Res.get('','index.html')
     
     from utils import Utils
-    Utils.save('https://marty5499.github.io/pythonCode/app/CamApp.py','main.py')
+    Utils.save('https://webduinoio.github.io/pythonCode/app/CamApp.py','main.py')
 
     from webduino.config import Config
     print("-=-=-=-=-=-=-=-=-=-=-=-=-=-=-")
