@@ -1,11 +1,10 @@
 import usocket
 
 class GDriver:
-    scriptId='AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
-    scriptCode = 'https://script.google.com/u/1/home/projects/1I29nq5NHfhvYjGlssJyFG1RfwbTrKdRr1VE_vX3kI5t76mmytqUHsiMd/edit'
+    scriptId='AKfycbxJb0FP9F000Rmo3DEqsP6xkDNcqbI3qiOvVBOeVQredfE6T3G602mTwhQ6RxrvKIZO'
 
-    def setScriptURL(scriptURL):
-        GDriver.scriptURL = scriptURL
+    def setScriptId(scriptId):
+        GDriver.scriptId = scriptId
 
     def setFolderId(folderId):
         GDriver.folderId = folderId

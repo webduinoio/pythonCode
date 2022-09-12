@@ -5,7 +5,7 @@ from webduino.camera import Camera
 from webduino.gdriver import GDriver
 
 from machine import WDT
-import ntptime,time, machine, urequests, gc, os, ubinascii, network
+import ntptime,time, machine, urequests, gc, os, ubinascii, network, sys
 
 class CamApp():
 
@@ -13,14 +13,14 @@ class CamApp():
         data = {}
         data['sendTime'] = 5
         data['enableCron'] = False
-        data['folderId'] = '1c3fen96e5NFtzdRFMI1KnMc9XvqydjI9'
-        data['scriptId'] = 'AKfycbxhgMJ0MH74u2wJeevLmIJTC-cgBV3IuvtO_22mopfIdkjSfFXsbJE0DFDiuFKuyyiR'
+        data['folderId'] = '1m4y4clRA2uymcFeoMYtJHMtUPP6nsDuu'
+        data['scriptId'] = 'AKfycbxJb0FP9F000Rmo3DEqsP6xkDNcqbI3qiOvVBOeVQredfE6T3G602mTwhQ6RxrvKIZO'
         return data
     
     def init(ledPin=4,deviceId=''):
         CamApp.cfg = JSONFile('webeye.cfg',CamApp.getDefaultCfg())
         ##
-        GDriver.scriptURL = CamApp.cfg.get('scriptId')
+        GDriver.scriptId = CamApp.cfg.get('scriptId')
         GDriver.folderId = CamApp.cfg.get('folderId')
         CamApp.sendTime = CamApp.cfg.get('sendTime')
         CamApp.enableCron = CamApp.cfg.get('enableCron')
@@ -32,14 +32,13 @@ class CamApp():
         CamApp.led.blink(0.5)
         CamApp.cam = Camera
         CamApp.cam.init()
-        print("init board...")
         CamApp.board = Board(deviceId)
         CamApp.name = CamApp.board.devId
         CamApp.reg_cmd()
         #CamApp.board.setExtraCmdProcess(CamApp.camCmd)
-        CamApp.board.publish(CamApp.name+'/state', 'ready '+str(CamApp.cfg.data))
         print("set RTC...")
         CamApp.setRTC()
+        CamApp.board.publish(CamApp.name+'/state', 'ready '+str(CamApp.cfg.data))
         CamApp.led.blink(0)
         gc.collect()
 
@@ -53,7 +52,8 @@ class CamApp():
         CamApp.board.onTopic("snapshot",CamApp.cmd_snapshot)
         CamApp.board.onTopic("enableCron",CamApp.cmd_enableCron)
         CamApp.board.onTopic("folderId",CamApp.cmd_folderId)
-        CamApp.board.onTopic("scriptURL",CamApp.cmd_scriptURL)
+        CamApp.board.onTopic("scriptId",CamApp.cmd_scriptId)
+        CamApp.board.onTopic("version",CamApp.cmd_version)
 
     #重新開機
     def cmd_reboot(args):
@@ -118,20 +118,29 @@ class CamApp():
         CamApp.cfg.save()
         CamApp.board.publish(CamApp.name+'/state', 'setOK folderId')
 
-    # 雲端硬碟腳本網址 scriptURL
-    def cmd_scriptURL(args):
-        print("cmd_scriptURL:"+args)
-        GDriver.scriptURL = args
-        CamApp.cfg.put('scriptURL',GDriver.scriptURL)
+    # google app script ID
+    def cmd_scriptId(args):
+        print("cmd_scriptId:"+args)
+        GDriver.scriptId = args
+        CamApp.cfg.put('scriptId',GDriver.scriptId)
         CamApp.cfg.save()
-        CamApp.board.publish(CamApp.name+'/state', 'setOK scriptURL')
+        CamApp.board.publish(CamApp.name+'/state', 'setOK scriptId')
+
+    # 取得版本
+    def cmd_version(args):
+        print("cmd_version")
+        CamApp.board.publish(CamApp.name+'/state', 'version '+CamApp.board.Ver)
 
     def setRTC():
         print("set ntptime & rtc")
         ntptime.NTP_DELTA = ntptime.NTP_DELTA - 8*60*60
         setNTPTime = False
+        setNTPTimeCount = 0
         while(not setNTPTime):
             try:
+                setNTPTimeCount += 1
+                if setNTPTimeCount > 10:
+                    break
                 ntptime.settime()
                 setNTPTime = True
             except Exception as e:
@@ -208,9 +217,11 @@ class CamApp():
 #####################
 try:
     import cmd
+    time.sleep(1)
     machine.reset()
-except:
-    pass
+except Exception as e:
+    print("cmd err")
+    sys.print_exception(e)
 #####################
 try:
     CamApp.init(ledPin=2)
