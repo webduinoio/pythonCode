@@ -3,12 +3,22 @@ from webduino.mqtt import MQTT
 from webduino.debug import debug
 from webduino.config import Config
 from webduino.webserver import WebServer
-import time, ubinascii, network, machine, os
+import time, ubinascii, network, machine, os, sys
 
 class Board:
     
-    Ver = '0.2.0b'
+    Ver = '0.3.0b'
+
+    def __new__(self, devId):
+        if not hasattr(self, 'instances'):
+            self.instances = {}
+        if devId not in self.instances:
+            self.instances[devId] = super().__new__(self)
+        return self.instances[devId]
+
     def __init__(self,devId=''): 
+        if hasattr(self, 'devId'):
+            return
         self.wifi = WiFi
         self.mqtt = MQTT
         self.wifi.onlilne(self.online)
@@ -112,6 +122,14 @@ class Board:
     def extraCmd(cmd,dataArgs):
         pass
         
+    def extraCode(self,code):
+        try:
+            exec(code, globals())
+            self.report('execOK extraCode')
+            time.sleep(1)
+        except Exception as e:
+            sys.print_exception(e)
+
     def execCmd(self,data):
         dataArgs = data.split(' ')
         print("exceCmd:",dataArgs)
@@ -141,8 +159,9 @@ class Board:
             f.write('os.remove("cmd.py")\r\n')
             f.write('from utils import *\r\n')
             f.write('from webduino.board import Board\r\n')
-            f.write('Board()\r\n') # wifi connect()
+            f.write('board = Board(devId="")\r\n') # wifi connect()
             f.write("Utils.save('"+url+"','"+file+"')\r\n")
+            f.write('board.report("ota_"+"{file}")\r\n'.format(file=file))
             f.close()
             self.report('save')
             time.sleep(1)
