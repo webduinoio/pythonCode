@@ -53,7 +53,6 @@ class CamApp():
         CamApp.board.onTopic("enableCron",CamApp.cmd_enableCron)
         CamApp.board.onTopic("folderId",CamApp.cmd_folderId)
         CamApp.board.onTopic("scriptId",CamApp.cmd_scriptId)
-        CamApp.board.onTopic("extraCode",CamApp.cmd_extraCode)
         CamApp.board.onTopic("version",CamApp.cmd_version)
 
     #重新開機
@@ -126,12 +125,6 @@ class CamApp():
         CamApp.cfg.put('scriptId',GDriver.scriptId)
         CamApp.cfg.save()
         CamApp.board.publish(CamApp.name+'/state', 'setOK scriptId')
-
-    # 執行自定義程式碼
-    def cmd_extraCode(args):
-        print("cmd_extraCode")
-        CamApp.board.extraCode(args)
-        CamApp.board.publish(CamApp.name+'/state', 'setOK extraCode')
 
     # 取得版本
     def cmd_version(args):

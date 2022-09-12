@@ -121,14 +121,6 @@ class Board:
         
     def extraCmd(cmd,dataArgs):
         pass
-        
-    def extraCode(self,code):
-        try:
-            exec(code, globals())
-            self.report('execOK extraCode')
-            time.sleep(1)
-        except Exception as e:
-            sys.print_exception(e)
 
     def execCmd(self,data):
         dataArgs = data.split(' ')
