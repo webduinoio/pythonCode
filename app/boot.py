@@ -6,7 +6,10 @@ import time, sys
 print("wait interrupt")
 time.sleep(0.5)
 try:
+    from webduino.led import LED
     from webduino.board import Board
+    led = LED(2)
+    led.blink(0.5)
     print("init board...")
     Board(devId='')
 except Exception as e:

@@ -1,7 +1,16 @@
 from machine import Pin, PWM, Timer
 
 class LED:
+    def __new__(self,pin,strong=100,pwm=True):
+        if not hasattr(self, 'instances'):
+            self.instances = {}
+        if pin not in self.instances:
+            self.instances[pin] = super().__new__(self)
+        return self.instances[pin]
+
     def __init__(self,pin,strong=100,pwm=True):
+        if hasattr(self, 'pin'):
+            return
         self.pin = pin
         self.strong=strong
         self.state = False
