@@ -29,7 +29,6 @@ class CamApp():
         CamApp.snaping = False
         CamApp.led = LED(ledPin)
         print("cam init...")
-        CamApp.led.blink(0.5)
         CamApp.cam = Camera
         CamApp.cam.init()
         CamApp.board = Board(deviceId)

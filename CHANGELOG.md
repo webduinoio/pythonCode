@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## [1.0.2] - 2022.09.16
+
+### Fixed
+
+- 修正 led 閃爍時機  [#5757](https://redmine.kingkit.codes/issues/5757)
+
 ## [1.0.1] - 2022.09.12
 
 ### Fixed
@@ -18,5 +24,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 - 修正線上更新網址 [#5698](https://redmine.kingkit.codes/issues/5698)
 
-[unreleased]: https://github.com/webduinoio/pythonCode/compare/1.0.0...HEAD
+[unreleased]: https://github.com/webduinoio/pythonCode/compare/1.0.2...HEAD
+[1.0.2]: https://github.com/webduinoio/pythonCode/releases/tag/1.0.2
+[1.0.1]: https://github.com/webduinoio/pythonCode/releases/tag/1.0.1
 [1.0.0]: https://github.com/webduinoio/pythonCode/releases/tag/1.0.0
