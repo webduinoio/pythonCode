@@ -809,3 +809,17 @@ image_dict = {
     "multiply": "1000101010001000101010001",
     "division": "0010000000111110000000100",
 }
+
+
+def get_text(text) -> str:
+    if text in text_dict:
+        return "".join(text_dict[text])
+    else:
+        return "".join(text_dict["?"])
+
+
+def get_image(image) -> str:
+    if image in image_dict:
+        return image_dict[image]
+    else:
+        return "".join(text_dict["?"])
