@@ -717,5 +717,4 @@ image_dict = {
 def get_image(image) -> str:
     if image in image_dict:
         return "".join(image_dict[image])
-    else:
-        return "".join(image_dict["?"])
+    return "".join(image_dict["?"])
