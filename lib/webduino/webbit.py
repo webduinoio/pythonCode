@@ -5,7 +5,7 @@ from machine import ADC, I2C, Pin
 from neopixel import NeoPixel
 from webduino.board import Board
 from webduino.debug import debug
-import random,time
+from webduino.image import get_array
 
 class Temp():
     def __init__(self):
@@ -255,3 +255,44 @@ class WebBit:
 
     def sleep(self,i):
         time.sleep(i)
+
+    def scroll(self, r, g, b, scroll_data, delay=0.2):
+        # 跑馬燈 5x5 陣列
+        scroll_string = ["", "", "", "", ""]
+        # 要顯示的資料串再一起
+        for i in range(0, 5):
+            scroll_string[i] = (
+                "".join(get_array(char)[i] for char in scroll_data)
+                if type(scroll_data) == str
+                else "".join(get_array(image)[i] for image in scroll_data)
+            )
+        # 至少要刷新 6 次把最後一次螢幕沒刷新的資料清掉
+        for _ in range(0, len(scroll_data) * 5 + 1):
+            # 資料處理
+            data = (
+                scroll_string[0][0:5]
+                + scroll_string[1][0:5]
+                + scroll_string[2][0:5]
+                + scroll_string[3][0:5]
+                + scroll_string[4][0:5]
+            )
+            matrix = [[int(data[i * 5 + j]) for j in range(5)]
+                      for i in range(5)]
+            reversed_matrix = [list(reversed(row)) for row in matrix]
+            transposed_matrix = [
+                [reversed_matrix[j][i] for j in range(5)] for i in range(5)
+            ]
+            data = "".join(
+                str(transposed_matrix[i][j]) for i in range(5) for j in range(5)
+            )
+            for i in range(len(data)):
+                if data[i] == "0":
+                    self.np[i] = (0, 0, 0)
+                elif data[i] == "1":
+                    self.np[i] = (r, g, b)
+            self.np.write()
+            # 整個 5x5 陣列往左 shift 1 bit，最後面補 0
+            for array_index in range(0, 5):
+                scroll_string[array_index] = scroll_string[array_index][1:] + "0"
+            self.sleep(delay)
+        self.clear()
