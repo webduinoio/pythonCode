@@ -257,6 +257,9 @@ class WebBit:
         time.sleep(i)
 
     def scroll(self, r, g, b, scroll_data, delay=0.2):
+        r = int(r / 10)
+        g = int(g / 10)
+        b = int(b / 10)
         # 跑馬燈 5x5 陣列
         scroll_string = ["", "", "", "", ""]
         # 要顯示的資料串再一起
